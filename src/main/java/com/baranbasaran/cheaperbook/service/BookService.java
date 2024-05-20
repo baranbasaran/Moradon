@@ -1,5 +1,9 @@
 package com.baranbasaran.cheaperbook.service;
 
+import com.baranbasaran.cheaperbook.contoller.request.BookRequest;
+import com.baranbasaran.cheaperbook.contoller.request.CreateBookRequest;
+import com.baranbasaran.cheaperbook.contoller.request.UpdateBookRequest;
+import com.baranbasaran.cheaperbook.enums.Status;
 import com.baranbasaran.cheaperbook.model.Book;
 import com.baranbasaran.cheaperbook.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,37 +17,43 @@ public class BookService {
 
     private final BookRepository bookRepository;
 
-    public List<Book> getBooks() {
+    public List<Book> findAll() {
         return bookRepository.findAll();
     }
 
-    public Book getBookById(Long id) {
+    public Book findById(Long id) {
         return bookRepository.findById(id).orElse(null);
     }
 
-    public Book addBook(Book newBook) {
-        return bookRepository.save(newBook);
+    public Book create(CreateBookRequest bookRequest) {
+        bookRequest.setId(null);
+        return merge(bookRequest);
     }
 
-    public Book updateBook(Long id, Book updatedBook) {
-        return bookRepository.findById(id)
-                .map(book -> {
-                    book.setTitle(updatedBook.getTitle());
-                    book.setAuthor(updatedBook.getAuthor());
-                    book.setGenre(updatedBook.getGenre());
-                    book.setPrice(updatedBook.getPrice());
-                    book.setDescription(updatedBook.getDescription());
-                    book.setOwner(updatedBook.getOwner());
-                    book.setStatus(updatedBook.getStatus());
-                    return bookRepository.save(book);
-                })
-                .orElseGet(() -> {
-                    updatedBook.setId(id);
-                    return bookRepository.save(updatedBook);
-                });
+    public Book update(UpdateBookRequest bookRequest) {
+        return merge(bookRequest);
     }
 
-    public void deleteBook(Long id) {
-        bookRepository.deleteById(id);
+    public void delete(Long id) {
+        Book book = bookRepository.findById(id).orElse(null);
+        if (book != null) {
+            book.setDeleted(true);
+            bookRepository.save(book);
+        }
+    }
+
+    public Book merge(BookRequest request) {
+        Book book = bookRepository.findById(request.getId()).orElse(null);
+        if (book == null) {
+            book = new Book();
+        }
+        book.setTitle(request.getTitle());
+        book.setAuthor(request.getAuthor());
+        book.setGenre(request.getGenre());
+        book.setDescription(request.getDescription());
+        book.setOwner(request.getOwner());
+        book.setPrice(request.getPrice());
+        book.setStatus(Status.AVAILABLE);
+        return bookRepository.save(book);
     }
 }
