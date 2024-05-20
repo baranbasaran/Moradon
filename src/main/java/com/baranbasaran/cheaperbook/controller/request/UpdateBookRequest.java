@@ -1,4 +1,4 @@
-package com.baranbasaran.cheaperbook.contoller.request;
+package com.baranbasaran.cheaperbook.controller.request;
 
 import lombok.*;
 

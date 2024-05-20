@@ -1,8 +1,8 @@
 package com.baranbasaran.cheaperbook.service;
 
-import com.baranbasaran.cheaperbook.contoller.request.BookRequest;
-import com.baranbasaran.cheaperbook.contoller.request.CreateBookRequest;
-import com.baranbasaran.cheaperbook.contoller.request.UpdateBookRequest;
+import com.baranbasaran.cheaperbook.controller.request.BookRequest;
+import com.baranbasaran.cheaperbook.controller.request.CreateBookRequest;
+import com.baranbasaran.cheaperbook.controller.request.UpdateBookRequest;
 import com.baranbasaran.cheaperbook.enums.Status;
 import com.baranbasaran.cheaperbook.model.Book;
 import com.baranbasaran.cheaperbook.repository.BookRepository;
@@ -26,7 +26,6 @@ public class BookService {
     }
 
     public Book create(CreateBookRequest bookRequest) {
-        bookRequest.setId(null);
         return merge(bookRequest);
     }
 
@@ -43,7 +42,10 @@ public class BookService {
     }
 
     public Book merge(BookRequest request) {
-        Book book = bookRepository.findById(request.getId()).orElse(null);
+        Book book = null;
+        if (request.getId() != null) {
+            book = bookRepository.findById(request.getId()).orElse(null);
+        }
         if (book == null) {
             book = new Book();
         }
