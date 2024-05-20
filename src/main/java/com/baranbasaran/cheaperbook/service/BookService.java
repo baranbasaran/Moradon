@@ -1,33 +1,31 @@
-package com.example.CheaperBook.Controller;
+package com.baranbasaran.cheaperbook.service;
 
-import com.example.CheaperBook.Model.Book;
-import com.example.CheaperBook.Repository.BookRepository;
-import org.springframework.web.bind.annotation.*;
+import com.baranbasaran.cheaperbook.model.Book;
+import com.baranbasaran.cheaperbook.repository.BookRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/books")
-public class BookController {
+@Service
+@RequiredArgsConstructor
+public class BookService {
 
     private final BookRepository bookRepository;
 
-    public BookController(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
-
-    @GetMapping
     public List<Book> getBooks() {
         return bookRepository.findAll();
     }
 
-    @PostMapping
-    public Book addBook(@RequestBody Book newBook) {
+    public Book getBookById(Long id) {
+        return bookRepository.findById(id).orElse(null);
+    }
+
+    public Book addBook(Book newBook) {
         return bookRepository.save(newBook);
     }
 
-    @PutMapping("/{id}")
-    public Book updateBook(@PathVariable Long id, @RequestBody Book updatedBook) {
+    public Book updateBook(Long id, Book updatedBook) {
         return bookRepository.findById(id)
                 .map(book -> {
                     book.setTitle(updatedBook.getTitle());
@@ -45,8 +43,7 @@ public class BookController {
                 });
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id) {
+    public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }
 }
