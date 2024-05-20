@@ -1,4 +1,4 @@
-package com.example.CheaperBook;
+package com.baranbasaran.cheaperbook;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
