@@ -3,8 +3,6 @@ package com.baranbasaran.cheaperbook.controller.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor

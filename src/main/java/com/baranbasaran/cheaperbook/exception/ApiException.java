@@ -1,5 +1,8 @@
 package com.baranbasaran.cheaperbook.exception;
 
+import lombok.Getter;
+
+@Getter
 public class ApiException extends RuntimeException {
     private final String errorCode;
     private final String errorMessage;
@@ -10,11 +13,5 @@ public class ApiException extends RuntimeException {
         this.errorMessage = errorMessage;
     }
 
-    public String getErrorCode() {
-        return errorCode;
-    }
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
 }
