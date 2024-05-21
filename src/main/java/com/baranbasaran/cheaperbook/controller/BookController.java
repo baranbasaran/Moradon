@@ -1,7 +1,6 @@
 package com.baranbasaran.cheaperbook.controller;
 
 import com.baranbasaran.cheaperbook.common.dto.Response;
-import com.baranbasaran.cheaperbook.controller.request.BookRequest;
 import com.baranbasaran.cheaperbook.controller.request.CreateBookRequest;
 import com.baranbasaran.cheaperbook.controller.request.UpdateBookRequest;
 import com.baranbasaran.cheaperbook.dto.BookDto;
@@ -37,10 +36,8 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public Response<BookDto> updateBook(@PathVariable Long id, @RequestBody @Valid BookRequest bookRequest) {
-        UpdateBookRequest updatedBookRequest = (UpdateBookRequest) bookRequest;
-        updatedBookRequest.setId(id);
-        return Response.success(bookService.update(updatedBookRequest));
+    public Response<BookDto> updateBook(@PathVariable Long id, @RequestBody @Valid UpdateBookRequest bookRequest) {
+        return Response.success(bookService.update(id, bookRequest));
     }
 
     @DeleteMapping("/{id}")

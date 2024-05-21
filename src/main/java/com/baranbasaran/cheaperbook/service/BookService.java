@@ -8,6 +8,7 @@ import com.baranbasaran.cheaperbook.enums.Status;
 import com.baranbasaran.cheaperbook.exception.BookNotFoundException;
 import com.baranbasaran.cheaperbook.model.Book;
 import com.baranbasaran.cheaperbook.repository.BookRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,8 @@ public class BookService {
         return BookDto.from(merge(bookRequest));
     }
 
-    public BookDto update(UpdateBookRequest bookRequest) {
+    public BookDto update(Long id, UpdateBookRequest bookRequest) {
+        bookRequest.setId(id);
         return BookDto.from(merge(bookRequest));
     }
 
@@ -42,6 +44,7 @@ public class BookService {
         bookRepository.save(book);
     }
 
+    @Transactional
     private Book merge(BookRequest request) {
         Book book = null;
         if (request.getId() != null) {
