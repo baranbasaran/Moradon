@@ -1,10 +1,13 @@
 package com.baranbasaran.cheaperbook.model;
 
+import com.baranbasaran.cheaperbook.common.model.BaseEntity;
 import com.baranbasaran.cheaperbook.enums.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Filter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -29,7 +32,7 @@ public class Book extends BaseEntity {
     private String owner;
 
     @Column(nullable = false)
-    private Integer price;
+    private BigDecimal price;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

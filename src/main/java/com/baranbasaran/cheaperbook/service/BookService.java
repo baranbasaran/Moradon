@@ -3,8 +3,9 @@ package com.baranbasaran.cheaperbook.service;
 import com.baranbasaran.cheaperbook.controller.request.BookRequest;
 import com.baranbasaran.cheaperbook.controller.request.CreateBookRequest;
 import com.baranbasaran.cheaperbook.controller.request.UpdateBookRequest;
+import com.baranbasaran.cheaperbook.dto.BookDto;
 import com.baranbasaran.cheaperbook.enums.Status;
-import com.baranbasaran.cheaperbook.exception.ApiException;
+import com.baranbasaran.cheaperbook.exception.BookNotFoundException;
 import com.baranbasaran.cheaperbook.model.Book;
 import com.baranbasaran.cheaperbook.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,24 +19,25 @@ public class BookService {
 
     private final BookRepository bookRepository;
 
-    public List<Book> findAll() {
-        return bookRepository.findAll();
+    public List<BookDto> findAll() {
+        return bookRepository.findAll().stream().map(BookDto::from).toList();
     }
 
-    public Book findById(Long id) {
-        return bookRepository.findById(id).orElseThrow(() -> new ApiException("BOOK_NOT_FOUND", "Book not found with id: " + id));
+    public BookDto findById(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+        return BookDto.from(book);
     }
 
-    public Book create(CreateBookRequest bookRequest) {
-        return merge(bookRequest);
+    public BookDto create(CreateBookRequest bookRequest) {
+        return BookDto.from(merge(bookRequest));
     }
 
-    public Book update(UpdateBookRequest bookRequest) {
-        return merge(bookRequest);
+    public BookDto update(UpdateBookRequest bookRequest) {
+        return BookDto.from(merge(bookRequest));
     }
 
     public void delete(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new ApiException("BOOK_NOT_FOUND", "Book not found with id: " + id));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
         book.setDeleted(true);
         bookRepository.save(book);
     }
@@ -43,7 +45,8 @@ public class BookService {
     private Book merge(BookRequest request) {
         Book book = null;
         if (request.getId() != null) {
-            book = bookRepository.findById(request.getId()).orElseThrow(() -> new ApiException("BOOK_NOT_FOUND", "Book not found with id: " + request.getId()));
+            book = bookRepository.findById(request.getId())
+                .orElseThrow(() -> new BookNotFoundException(request.getId()));
         }
         if (book == null) {
             book = new Book();
