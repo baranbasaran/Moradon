@@ -1,5 +1,6 @@
 package com.baranbasaran.cheaperbook.controller;
 
+import com.baranbasaran.cheaperbook.controller.dto.Response;
 import com.baranbasaran.cheaperbook.controller.request.BookRequest;
 import com.baranbasaran.cheaperbook.controller.request.CreateBookRequest;
 import com.baranbasaran.cheaperbook.controller.request.UpdateBookRequest;
@@ -20,31 +21,32 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public List<Book> getBooks() {
-        return bookService.findAll();
+    public Response<List<Book>> getBooks() {
+        return Response.success(bookService.findAll());
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Book getBookById(@PathVariable Long id) {
-        return bookService.findById(id);
+    public Response<Book> getBookById(@PathVariable Long id) {
+        return Response.success(bookService.findById(id));
     }
 
     @PostMapping
-    public Book addBook(@RequestBody @Validated CreateBookRequest bookRequest) {
-        return bookService.create(bookRequest);
+    public Response<Book> addBook(@RequestBody @Validated CreateBookRequest bookRequest) {
+        return Response.success(bookService.create(bookRequest));
     }
 
     @PutMapping("/{id}")
-    public Book updateBook(@PathVariable Long id, @RequestBody @Validated BookRequest bookRequest) {
+    public Response<Book> updateBook(@PathVariable Long id, @RequestBody @Validated BookRequest bookRequest) {
         UpdateBookRequest updatedBookRequest = (UpdateBookRequest) bookRequest;
         updatedBookRequest.setId(id);
-        return bookService.update(updatedBookRequest);
+        return Response.success(bookService.update(updatedBookRequest));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteBook(@PathVariable Long id) {
+    public Response<Void> deleteBook(@PathVariable Long id) {
         bookService.delete(id);
+        return Response.success(null);
     }
 }

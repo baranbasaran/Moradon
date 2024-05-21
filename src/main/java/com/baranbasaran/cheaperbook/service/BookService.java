@@ -4,6 +4,7 @@ import com.baranbasaran.cheaperbook.controller.request.BookRequest;
 import com.baranbasaran.cheaperbook.controller.request.CreateBookRequest;
 import com.baranbasaran.cheaperbook.controller.request.UpdateBookRequest;
 import com.baranbasaran.cheaperbook.enums.Status;
+import com.baranbasaran.cheaperbook.exception.ApiException;
 import com.baranbasaran.cheaperbook.model.Book;
 import com.baranbasaran.cheaperbook.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class BookService {
     }
 
     public Book findById(Long id) {
-        return bookRepository.findById(id).orElse(null);
+        return bookRepository.findById(id).orElseThrow(() -> new ApiException("BOOK_NOT_FOUND", "Book not found with id: " + id));
     }
 
     public Book create(CreateBookRequest bookRequest) {
@@ -34,17 +35,15 @@ public class BookService {
     }
 
     public void delete(Long id) {
-        Book book = bookRepository.findById(id).orElse(null);
-        if (book != null) {
-            book.setDeleted(true);
-            bookRepository.save(book);
-        }
+        Book book = bookRepository.findById(id).orElseThrow(() -> new ApiException("BOOK_NOT_FOUND", "Book not found with id: " + id));
+        book.setDeleted(true);
+        bookRepository.save(book);
     }
 
-    public Book merge(BookRequest request) {
+    private Book merge(BookRequest request) {
         Book book = null;
         if (request.getId() != null) {
-            book = bookRepository.findById(request.getId()).orElse(null);
+            book = bookRepository.findById(request.getId()).orElseThrow(() -> new ApiException("BOOK_NOT_FOUND", "Book not found with id: " + request.getId()));
         }
         if (book == null) {
             book = new Book();
