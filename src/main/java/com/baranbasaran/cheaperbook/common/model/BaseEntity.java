@@ -1,4 +1,4 @@
-package com.baranbasaran.cheaperbook.model;
+package com.baranbasaran.cheaperbook.common.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
