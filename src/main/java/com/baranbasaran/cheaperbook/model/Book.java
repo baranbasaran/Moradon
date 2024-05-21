@@ -37,4 +37,16 @@ public class Book extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status; // added status field
+
+    @Column
+    private String isbn;
+
+    @Column
+    private String coverImage;
+
+    @Column
+    private String publisher;
+
+    @Column
+    private Integer publicationYear;
 }
