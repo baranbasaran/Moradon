@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,7 +24,7 @@ public class Book extends BaseEntity {
     private String author;
 
     @Column(nullable = false)
-    private String genre;
+    private List<String> genre;
 
     @Column(nullable = false)
     private String description;

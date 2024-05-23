@@ -11,13 +11,12 @@ import com.baranbasaran.cheaperbook.repository.BookRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class BookService {
-
+    private final BookApiClient bookApiClient;
     private final BookRepository bookRepository;
 
     public List<BookDto> findAll() {
@@ -46,7 +45,7 @@ public class BookService {
 
     @Transactional
     private Book merge(BookRequest request) {
-        Book book = null;
+        Book book = bookApiClient.getBookByIsbn(request.getIsbn());
         if (request.getId() != null) {
             book = bookRepository.findById(request.getId())
                 .orElseThrow(() -> new BookNotFoundException(request.getId()));
@@ -54,10 +53,6 @@ public class BookService {
         if (book == null) {
             book = new Book();
         }
-        book.setTitle(request.getTitle());
-        book.setAuthor(request.getAuthor());
-        book.setGenre(request.getGenre());
-        book.setDescription(request.getDescription());
         book.setOwner(request.getOwner());
         book.setPrice(request.getPrice());
         book.setStatus(Status.AVAILABLE);
