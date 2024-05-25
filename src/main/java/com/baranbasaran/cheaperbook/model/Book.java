@@ -26,7 +26,7 @@ public class Book extends BaseEntity {
     @Column(nullable = false)
     private List<String> genre;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "LONGTEXT", nullable = false)
     private String description;
 
     @Column(nullable = false)
@@ -35,9 +35,9 @@ public class Book extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @Column(nullable = false)
+    @Column(length = 20)
     @Enumerated(EnumType.STRING)
-    private Status status; // added status field
+    private Status status;
 
     @Column
     private String isbn;

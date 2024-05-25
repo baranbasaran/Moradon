@@ -28,6 +28,10 @@ public class BookRequest {
     @DecimalMin(value = "0.0", message = "must be greater than 0")
     private BigDecimal price;
 
-    @Size(min = 10, max = 13, message = " must be between 10 and 13 characters")
     private String isbn;
+
+    @Size(min = 10, max = 13, message = " must be between 10 and 13 characters")
+    public String getIsbn() {
+        return isbn != null ? isbn.replace("-", "") : null;
+    }
 }

@@ -49,11 +49,12 @@ public class BookService {
         Book book = null;
         if (request.getId() != null) {
             book = bookRepository.findById(request.getId())
-                .orElseThrow(() -> new BookNotFoundException(request.getId()));
+                    .orElseThrow(() -> new BookNotFoundException(request.getId()));
         }
         if (book == null) {
             book = getBookFromApi(request.getIsbn());
         }
+        book.setIsbn(request.getIsbn());
         book.setOwner(request.getOwner());
         book.setPrice(request.getPrice());
         book.setStatus(Status.AVAILABLE);
@@ -61,6 +62,6 @@ public class BookService {
     }
 
     private Book getBookFromApi(String isbn) {
-        return bookApiClient.getBookByIsbn(isbn).getFirstBook();
+        return bookApiClient.getBookByIsbn(isbn).getBook();
     }
 }

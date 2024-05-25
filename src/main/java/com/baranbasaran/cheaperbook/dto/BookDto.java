@@ -1,5 +1,6 @@
 package com.baranbasaran.cheaperbook.dto;
 
+import com.baranbasaran.cheaperbook.enums.Status;
 import com.baranbasaran.cheaperbook.model.Book;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,11 @@ public class BookDto {
     private String description;
     private String owner;
     private BigDecimal price;
+    private Status status;
+    private String isbn;
+    private String coverImage;
+    private String publisher;
+    private Integer publicationYear;
 
     public static BookDto from(Book book) {
         return BookDto.builder()
@@ -31,6 +37,11 @@ public class BookDto {
                 .description(book.getDescription())
                 .owner(book.getOwner())
                 .price(book.getPrice())
+                .status(book.getStatus())
+                .isbn(book.getIsbn())
+                .coverImage(book.getCoverImage())
+                .publisher(book.getPublisher())
+                .publicationYear(book.getPublicationYear())
                 .build();
     }
 }
