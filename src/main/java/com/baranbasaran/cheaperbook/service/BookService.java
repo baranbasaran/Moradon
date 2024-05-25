@@ -46,13 +46,13 @@ public class BookService {
 
     @Transactional
     private Book merge(BookRequest request) {
-        Book book = getBookFromApi(request.getIsbn());
+        Book book = null;
         if (request.getId() != null) {
             book = bookRepository.findById(request.getId())
                 .orElseThrow(() -> new BookNotFoundException(request.getId()));
         }
         if (book == null) {
-            book = new Book();
+            book = getBookFromApi(request.getIsbn());
         }
         book.setOwner(request.getOwner());
         book.setPrice(request.getPrice());
