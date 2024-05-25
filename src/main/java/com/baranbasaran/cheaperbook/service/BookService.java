@@ -1,5 +1,6 @@
 package com.baranbasaran.cheaperbook.service;
 
+import com.baranbasaran.cheaperbook.client.GoogleBookApiClient;
 import com.baranbasaran.cheaperbook.controller.request.BookRequest;
 import com.baranbasaran.cheaperbook.controller.request.CreateBookRequest;
 import com.baranbasaran.cheaperbook.controller.request.UpdateBookRequest;
@@ -16,7 +17,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BookService {
-    private final BookApiClient bookApiClient;
+    private final GoogleBookApiClient bookApiClient;
     private final BookRepository bookRepository;
 
     public List<BookDto> findAll() {
@@ -45,7 +46,7 @@ public class BookService {
 
     @Transactional
     private Book merge(BookRequest request) {
-        Book book = bookApiClient.getBookByIsbn(request.getIsbn());
+        Book book = getBookFromApi(request.getIsbn());
         if (request.getId() != null) {
             book = bookRepository.findById(request.getId())
                 .orElseThrow(() -> new BookNotFoundException(request.getId()));
@@ -57,5 +58,9 @@ public class BookService {
         book.setPrice(request.getPrice());
         book.setStatus(Status.AVAILABLE);
         return bookRepository.save(book);
+    }
+
+    private Book getBookFromApi(String isbn) {
+        return bookApiClient.getBookByIsbn(isbn).getFirstBook();
     }
 }
