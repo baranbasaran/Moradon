@@ -1,10 +1,13 @@
 package com.baranbasaran.cheaperbook.client.response;
 
+import com.baranbasaran.cheaperbook.dto.BookDto;
 import com.baranbasaran.cheaperbook.model.Book;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -12,7 +15,7 @@ import java.util.List;
 public class GoogleBookResponse {
 
     @JsonProperty("items")
-    private List<Item> items;
+    private List<Item> items = List.of();
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -43,60 +46,54 @@ public class GoogleBookResponse {
             @JsonProperty("thumbnail")
             private String thumbnail;
         }
-        public static Book from(VolumeInfo volumeInfo, Book result) {
-            if (volumeInfo.getTitle() != null && result.getTitle() == null) {
+        public static BookDto from(VolumeInfo volumeInfo) {
+            BookDto result = new BookDto();
+
+            if (StringUtils.hasText(volumeInfo.getTitle())) {
                 result.setTitle(volumeInfo.getTitle());
             }
-            if (volumeInfo.getAuthors() != null && !volumeInfo.getAuthors().isEmpty() && result.getAuthor() == null) {
+            if (volumeInfo.getAuthors().stream().anyMatch(StringUtils::hasText)) {
                 result.setAuthor(volumeInfo.getAuthors().get(0));
             }
-            if (volumeInfo.getPublisher() != null && result.getPublisher() == null) {
-                result.setPublisher(volumeInfo.getPublisher());
-            }
-            if (volumeInfo.getImageLinks() != null && volumeInfo.getImageLinks().getThumbnail() != null && result.getCoverImage() == null) {
-                result.setCoverImage(volumeInfo.getImageLinks().getThumbnail());
-            }
-            if (volumeInfo.getPublishedDate() != null && result.getPublicationYear() == null) {
-                String publishedDate = volumeInfo.getPublishedDate();
-                if (publishedDate.length() >= 4) {
-                    result.setPublicationYear(Integer.valueOf(publishedDate.substring(0, 4)));
-                }
-            }
-            if (volumeInfo.getCategories() != null && result.getGenre() == null) {
+            if (!volumeInfo.getCategories().isEmpty()){
                 result.setGenre(volumeInfo.getCategories());
             }
-            if (volumeInfo.getDescription() != null && result.getDescription() == null) {
+            if (StringUtils.hasText(volumeInfo.getDescription())) {
                 result.setDescription(volumeInfo.getDescription());
+            }
+            if (StringUtils.hasText(volumeInfo.getPublisher())) {
+                result.setPublisher(volumeInfo.getPublisher());
+            }
+            if (StringUtils.hasText(volumeInfo.getPublishedDate())) {
+                result.setPublicationYear(LocalDateTime.parse(volumeInfo.getPublishedDate()).getYear());
+            }
+            if (volumeInfo.getImageLinks() != null && StringUtils.hasText(volumeInfo.getImageLinks().getThumbnail())) {
+                result.setCoverImage(volumeInfo.getImageLinks().getThumbnail());
             }
 
             return result;
         }
     }
+    public List<Book> getBooks() {
+        if (items.isEmpty()) {
+            return List.of();
+        }
+        return items.stream()
+                .map(Item::getVolumeInfo)
+                .map(VolumeInfo::from)
+            .map(bookDto -> {
+                Book book = new Book();
+                return book.mergeFromDto(bookDto);
+            })
+                .filter(Book::isValid)
+                .toList();
+    }
+
     public Book getBook() {
-        if (items == null || items.isEmpty()) {
-            return new Book();
+        if (items.isEmpty()) {
+            return null;
         }
-        Book result = new Book();
-
-        for (Item item : items) {
-            VolumeInfo volumeInfo = item.getVolumeInfo();
-            VolumeInfo.from(volumeInfo, result);
-
-            // Check if all fields have been set, if so, break the loop
-            if (result.getTitle() != null && result.getAuthor() != null && result.getPublisher() != null && result.getCoverImage() != null && result.getPublicationYear() != null && result.getGenre() != null && result.getDescription() != null) {
-                break;
-            }
-        }
-
-        if (result.getTitle() == null) result.setTitle("Title not available");
-        if (result.getAuthor() == null) result.setAuthor("Author information not available");
-        if (result.getPublisher() == null) result.setPublisher("Publisher not available");
-        if (result.getCoverImage() == null) result.setCoverImage("Cover image not available");
-        if (result.getPublicationYear() == null) result.setPublicationYear(null);
-        if (result.getGenre() == null) result.setGenre(List.of("No genre available"));
-        if (result.getDescription() == null) result.setDescription("No description available");
-
-        return result;
+        return getBooks().get(0);
     }
 
 }
