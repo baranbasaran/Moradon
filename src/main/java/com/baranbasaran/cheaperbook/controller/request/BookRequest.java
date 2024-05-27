@@ -29,6 +29,6 @@ public class BookRequest {
     @DecimalMin(value = "0.0", message = "must be greater than 0")
     private BigDecimal price;
 
-    @Pattern(regexp = "^([0-9]{10,13})$", message = "must be 10 or 13 digits")
+    @Pattern(regexp = "^([0-9]{10}|[0-9]{13})$", message = "must be 10 or 13 digits")
     private String isbn;
 }
