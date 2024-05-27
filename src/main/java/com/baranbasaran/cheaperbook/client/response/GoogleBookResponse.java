@@ -7,8 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -27,32 +28,34 @@ public class GoogleBookResponse {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class VolumeInfo {
-        private String title;
-        private List<String> authors;
-        private String description;
-        private List<String> categories;
+        private String title = "Title is not available";
+        private List<String> authors = List.of();
+        private String description = "Description is not available";
+        private List<String> categories = List.of();
 
         @JsonProperty("imageLinks")
         private ImageLinks imageLinks;
 
         @JsonProperty("publishedDate")
-        private String publishedDate;
+        private String publishedDate = "0000";
 
-        private String publisher;
+        private String publisher = "Publisher is not available";
 
         @Data
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class ImageLinks {
             @JsonProperty("thumbnail")
-            private String thumbnail;
+            private String thumbnail = "";
         }
+
         public static BookDto from(VolumeInfo volumeInfo) {
             BookDto result = new BookDto();
 
             if (StringUtils.hasText(volumeInfo.getTitle())) {
                 result.setTitle(volumeInfo.getTitle());
             }
-            if (volumeInfo.getAuthors().stream().anyMatch(StringUtils::hasText)) {
+            if (!volumeInfo.getAuthors().isEmpty()
+                    && volumeInfo.getAuthors().stream().anyMatch(StringUtils::hasText)) {
                 result.setAuthor(volumeInfo.getAuthors().get(0));
             }
             if (!volumeInfo.getCategories().isEmpty()){
@@ -64,10 +67,10 @@ public class GoogleBookResponse {
             if (StringUtils.hasText(volumeInfo.getPublisher())) {
                 result.setPublisher(volumeInfo.getPublisher());
             }
-            if (StringUtils.hasText(volumeInfo.getPublishedDate())) {
-                result.setPublicationYear(LocalDateTime.parse(volumeInfo.getPublishedDate()).getYear());
+            if (Objects.nonNull(volumeInfo.getPublishedDate())) {
+                result.setPublicationYear(Integer.parseInt(volumeInfo.getPublishedDate().substring(0, 4)));
             }
-            if (volumeInfo.getImageLinks() != null && StringUtils.hasText(volumeInfo.getImageLinks().getThumbnail())) {
+            if (Objects.nonNull(volumeInfo.getImageLinks()) && StringUtils.hasText(volumeInfo.getImageLinks().getThumbnail())) {
                 result.setCoverImage(volumeInfo.getImageLinks().getThumbnail());
             }
 
@@ -89,11 +92,12 @@ public class GoogleBookResponse {
                 .toList();
     }
 
-    public Book getBook() {
-        if (items.isEmpty()) {
-            return null;
+    public Optional<Book> getBook() {
+        List<Book> books = getBooks();
+        if (books.isEmpty()) {
+            return Optional.empty();
         }
-        return getBooks().get(0);
+        return Optional.of(books.get(0));
     }
 
 }

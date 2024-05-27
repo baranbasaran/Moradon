@@ -27,7 +27,7 @@ public class Book extends BaseEntity {
     @Column(nullable = false)
     private List<String> genre;
 
-    @Column(columnDefinition = "LONGTEXT", nullable = false)
+    @Column(nullable = false, length = 1000, columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false)
@@ -40,7 +40,7 @@ public class Book extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column
+    @Column(nullable = false)
     private String isbn;
 
     @Column
@@ -90,12 +90,6 @@ public class Book extends BaseEntity {
     }
 
     public boolean isValid() {
-        return this.getTitle() != null
-            && this.getAuthor() != null
-            && this.getPublisher() != null
-            && this.getCoverImage() != null
-            && this.getPublicationYear() != null
-            && this.getGenre() != null
-            && this.getDescription() != null;
+        return this.getTitle() != null;
     }
 }
