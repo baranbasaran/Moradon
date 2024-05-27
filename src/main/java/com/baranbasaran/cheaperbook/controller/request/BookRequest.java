@@ -1,6 +1,7 @@
 package com.baranbasaran.cheaperbook.controller.request;
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -20,7 +21,7 @@ public class BookRequest {
 
     private List<String> genre;
 
-    @Size(min = 1, max = 1000, message = " must be between 1 and 1000 characters")
+    @Size(min = 1, max = 1000, message = "must be between 1 and 1000 characters")
     private String description;
 
     private String owner;
@@ -28,10 +29,6 @@ public class BookRequest {
     @DecimalMin(value = "0.0", message = "must be greater than 0")
     private BigDecimal price;
 
+    @Pattern(regexp = "^([0-9]{10}|[0-9]{13})$", message = "must be 10 or 13 digits")
     private String isbn;
-
-    @Size(min = 10, max = 13, message = " must be between 10 and 13 characters")
-    public String getIsbn() {
-        return isbn != null ? isbn.replace("-", "") : null;
-    }
 }

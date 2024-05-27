@@ -1,18 +1,22 @@
 package com.baranbasaran.cheaperbook.client.response;
 
+import com.baranbasaran.cheaperbook.dto.BookDto;
 import com.baranbasaran.cheaperbook.model.Book;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GoogleBookResponse {
 
     @JsonProperty("items")
-    private List<Item> items;
+    private List<Item> items = List.of();
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -24,79 +28,76 @@ public class GoogleBookResponse {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class VolumeInfo {
-        private String title;
-        private List<String> authors;
-        private String description;
-        private List<String> categories;
+        private String title = "Title is not available";
+        private List<String> authors = List.of();
+        private String description = "Description is not available";
+        private List<String> categories = List.of();
 
         @JsonProperty("imageLinks")
         private ImageLinks imageLinks;
 
         @JsonProperty("publishedDate")
-        private String publishedDate;
+        private String publishedDate = "0000";
 
-        private String publisher;
+        private String publisher = "Publisher is not available";
 
         @Data
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class ImageLinks {
             @JsonProperty("thumbnail")
-            private String thumbnail;
+            private String thumbnail = "";
         }
-        public static Book from(VolumeInfo volumeInfo, Book result) {
-            if (volumeInfo.getTitle() != null && result.getTitle() == null) {
+
+        public static BookDto from(VolumeInfo volumeInfo) {
+            BookDto result = new BookDto();
+
+            if (StringUtils.hasText(volumeInfo.getTitle())) {
                 result.setTitle(volumeInfo.getTitle());
             }
-            if (volumeInfo.getAuthors() != null && !volumeInfo.getAuthors().isEmpty() && result.getAuthor() == null) {
+            if (!volumeInfo.getAuthors().isEmpty()
+                    && volumeInfo.getAuthors().stream().anyMatch(StringUtils::hasText)) {
                 result.setAuthor(volumeInfo.getAuthors().get(0));
             }
-            if (volumeInfo.getPublisher() != null && result.getPublisher() == null) {
-                result.setPublisher(volumeInfo.getPublisher());
-            }
-            if (volumeInfo.getImageLinks() != null && volumeInfo.getImageLinks().getThumbnail() != null && result.getCoverImage() == null) {
-                result.setCoverImage(volumeInfo.getImageLinks().getThumbnail());
-            }
-            if (volumeInfo.getPublishedDate() != null && result.getPublicationYear() == null) {
-                String publishedDate = volumeInfo.getPublishedDate();
-                if (publishedDate.length() >= 4) {
-                    result.setPublicationYear(Integer.valueOf(publishedDate.substring(0, 4)));
-                }
-            }
-            if (volumeInfo.getCategories() != null && result.getGenre() == null) {
+            if (!volumeInfo.getCategories().isEmpty()){
                 result.setGenre(volumeInfo.getCategories());
             }
-            if (volumeInfo.getDescription() != null && result.getDescription() == null) {
+            if (StringUtils.hasText(volumeInfo.getDescription())) {
                 result.setDescription(volumeInfo.getDescription());
+            }
+            if (StringUtils.hasText(volumeInfo.getPublisher())) {
+                result.setPublisher(volumeInfo.getPublisher());
+            }
+            if (Objects.nonNull(volumeInfo.getPublishedDate())) {
+                result.setPublicationYear(Integer.parseInt(volumeInfo.getPublishedDate().substring(0, 4)));
+            }
+            if (Objects.nonNull(volumeInfo.getImageLinks()) && StringUtils.hasText(volumeInfo.getImageLinks().getThumbnail())) {
+                result.setCoverImage(volumeInfo.getImageLinks().getThumbnail());
             }
 
             return result;
         }
     }
-    public Book getBook() {
-        if (items == null || items.isEmpty()) {
-            return new Book();
+    public List<Book> getBooks() {
+        if (items.isEmpty()) {
+            return List.of();
         }
-        Book result = new Book();
+        return items.stream()
+                .map(Item::getVolumeInfo)
+                .map(VolumeInfo::from)
+            .map(bookDto -> {
+                Book book = new Book();
+                return book.mergeFromDto(bookDto);
+            })
+                .filter(Book::isValid)
+                .toList();
+    }
 
-        for (Item item : items) {
-            VolumeInfo volumeInfo = item.getVolumeInfo();
-            VolumeInfo.from(volumeInfo, result);
-
-            // Check if all fields have been set, if so, break the loop
-            if (result.getTitle() != null && result.getAuthor() != null && result.getPublisher() != null && result.getCoverImage() != null && result.getPublicationYear() != null && result.getGenre() != null && result.getDescription() != null) {
-                break;
-            }
+    public Optional<Book> getBook() {
+        List<Book> books = getBooks();
+        if (books.isEmpty()) {
+            return Optional.empty();
         }
-
-        if (result.getTitle() == null) result.setTitle("Title not available");
-        if (result.getAuthor() == null) result.setAuthor("Author information not available");
-        if (result.getPublisher() == null) result.setPublisher("Publisher not available");
-        if (result.getCoverImage() == null) result.setCoverImage("Cover image not available");
-        if (result.getPublicationYear() == null) result.setPublicationYear(null);
-        if (result.getGenre() == null) result.setGenre(List.of("No genre available"));
-        if (result.getDescription() == null) result.setDescription("No description available");
-
-        return result;
+        return Optional.of(books.get(0));
     }
 
 }

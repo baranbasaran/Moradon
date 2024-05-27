@@ -11,9 +11,12 @@ import com.baranbasaran.cheaperbook.model.Book;
 import com.baranbasaran.cheaperbook.repository.BookRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookService {
@@ -62,6 +65,7 @@ public class BookService {
     }
 
     private Book getBookFromApi(String isbn) {
-        return bookApiClient.getBookByIsbn(isbn).getBook();
+        Optional<Book> book = bookApiClient.getBookByIsbn(isbn).getBook();
+        return book.orElse(new Book());
     }
 }
