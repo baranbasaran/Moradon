@@ -77,6 +77,7 @@ public class GoogleBookResponse {
             return result;
         }
     }
+
     public List<Book> getBooks() {
         if (items.isEmpty()) {
             return List.of();
@@ -100,4 +101,14 @@ public class GoogleBookResponse {
         return Optional.of(books.get(0));
     }
 
+    public Optional<Book> findByIsbnAndTitle(String isbn, String title ) {
+         List<Book> books = getBooks();
+          if (books.isEmpty()) {
+                return Optional.empty();
+          }
+          return books.stream()
+                 .filter(book -> book.getIsbn().equals(isbn) && book.getTitle().equals(title))
+                 .findFirst();
+     }
 }
+

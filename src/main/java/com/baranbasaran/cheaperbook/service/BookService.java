@@ -1,9 +1,9 @@
 package com.baranbasaran.cheaperbook.service;
 
 import com.baranbasaran.cheaperbook.client.GoogleBookApiClient;
-import com.baranbasaran.cheaperbook.controller.request.BookRequest;
-import com.baranbasaran.cheaperbook.controller.request.CreateBookRequest;
-import com.baranbasaran.cheaperbook.controller.request.UpdateBookRequest;
+import com.baranbasaran.cheaperbook.controller.request.Book.BookRequest;
+import com.baranbasaran.cheaperbook.controller.request.Book.CreateBookRequest;
+import com.baranbasaran.cheaperbook.controller.request.Book.UpdateBookRequest;
 import com.baranbasaran.cheaperbook.dto.BookDto;
 import com.baranbasaran.cheaperbook.enums.Status;
 import com.baranbasaran.cheaperbook.exception.BookNotFoundException;
@@ -33,12 +33,12 @@ public class BookService {
     }
 
     public BookDto create(CreateBookRequest bookRequest) {
-        return BookDto.from(merge(bookRequest));
+        return BookDto.from(mergeBookRequestWithExistingBook(bookRequest));
     }
 
     public BookDto update(Long id, UpdateBookRequest bookRequest) {
         bookRequest.setId(id);
-        return BookDto.from(merge(bookRequest));
+        return BookDto.from(mergeBookRequestWithExistingBook(bookRequest));
     }
 
     public void delete(Long id) {
@@ -46,16 +46,18 @@ public class BookService {
         book.setDeleted(true);
         bookRepository.save(book);
     }
-
+    public BookDto getBookDataByIsbnFromApi(String isbn) {
+        return BookDto.from(getBookByIsbnFromApi(isbn));
+    }
     @Transactional
-    private Book merge(BookRequest request) {
+    private Book mergeBookRequestWithExistingBook(BookRequest request) {
         Book book = null;
         if (request.getId() != null) {
             book = bookRepository.findById(request.getId())
                     .orElseThrow(() -> new BookNotFoundException(request.getId()));
         }
         if (book == null) {
-            book = getBookFromApi(request.getIsbn());
+            book = getBookByIsbnFromApi(request.getIsbn());
         }
         book.setIsbn(request.getIsbn());
         book.setOwner(request.getOwner());
@@ -64,7 +66,7 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    private Book getBookFromApi(String isbn) {
+    private Book getBookByIsbnFromApi(String isbn) {
         Optional<Book> book = bookApiClient.getBookByIsbn(isbn).getBook();
         return book.orElse(new Book());
     }

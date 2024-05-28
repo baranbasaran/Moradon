@@ -1,4 +1,4 @@
-package com.baranbasaran.cheaperbook.controller.request;
+package com.baranbasaran.cheaperbook.controller.request.Book;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Pattern;

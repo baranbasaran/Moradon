@@ -1,8 +1,8 @@
 package com.baranbasaran.cheaperbook.controller;
 
 import com.baranbasaran.cheaperbook.common.dto.Response;
-import com.baranbasaran.cheaperbook.controller.request.CreateBookRequest;
-import com.baranbasaran.cheaperbook.controller.request.UpdateBookRequest;
+import com.baranbasaran.cheaperbook.controller.request.Book.CreateBookRequest;
+import com.baranbasaran.cheaperbook.controller.request.Book.UpdateBookRequest;
 import com.baranbasaran.cheaperbook.dto.BookDto;
 import com.baranbasaran.cheaperbook.service.BookService;
 import jakarta.validation.Valid;
@@ -13,11 +13,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/v1/books")
 @RequiredArgsConstructor
 public class BookController {
 
     private final BookService bookService;
+
+    @GetMapping("/api/search")
+    public Response<BookDto> getBookDataByIsbnFromApi(@RequestParam String isbn) {
+        return Response.success(bookService.getBookDataByIsbnFromApi(isbn));
+    }
 
     @GetMapping
     public Response<List<BookDto>> getBooks() {
@@ -46,4 +51,5 @@ public class BookController {
         bookService.delete(id);
         return Response.success(null);
     }
+
 }
