@@ -1,35 +1,69 @@
 package com.baranbasaran.cheaperbook.controller.request.User;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.time.LocalDate;
+
+
+@Getter
+@Setter
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRequest {
 
-        private long id;
+        private Long id;
 
-        @Size(min = 1, max = 50, message = "must be between 1 and 50 characters")
+        @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
         private String name;
 
-        @Size(min = 1, max = 50, message = "must be between 1 and 50 characters")
+        @Size(min = 2, max = 50, message = "Surname must be between 2 and 50 characters")
         private String surname;
 
-        @Pattern(regexp = "^(.+)@(.+)$", message = "must be a valid email")
+        @Size(min = 2, max = 50, message = "Username must be between 2 and 50 characters")
+        private String username;
+
+        @Size(min = 2, max = 50, message = "Email must be between 2 and 50 characters")
+        @Pattern(regexp = "^(.+)@(.+)$", message = "Email must be valid")
         private String email;
 
-        @Size(min = 8, max = 50, message = "must be between 8 and 50 characters")
+        @Size(min = 2, max = 50, message = "Password must be between 2 and 50 characters")
         private String password;
 
-        @Pattern(regexp = "^([0-9]{10})$", message = "must be 10 digits")
+        private String profilePicture;
+
+        @NotNull(message = "Birth date cannot be null")
+        private LocalDate birthDate;
+
         private String phoneNumber;
 
-        @Size(min = 1, max = 100, message = "must be between 1 and 100 characters")
-        private String address;
+        @Valid
+        private AddressRequest address;
 
-        @Size(min = 1, max = 50, message = "must be between 1 and 50 characters")
-        private String city;
+        public boolean isValid() {
+            return this.getUsername() != null && this.getPassword() != null && this.getEmail() != null;
+        }
 
-        @Size(min = 1, max = 50, message = "must be between 1 and 50 characters")
-        private String country;
+        public boolean isCreateValid() {
+            return this.isValid() && this.getName() != null && this.getSurname() != null;
+        }
+
+        public boolean isUpdateValid() {
+            return this.isValid() && this.getId() != null;
+        }
+
+        public boolean isDeleteValid() {
+            return this.getId() != null;
+        }
+
+        public boolean isGetValid() {
+            return this.getId() != null;
+        }
+
+        public boolean isGetAllValid() {
+            return true;
+        }
 }

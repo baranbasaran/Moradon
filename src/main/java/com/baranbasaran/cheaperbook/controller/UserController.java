@@ -10,12 +10,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping
+    public Response<List<UserDto>> getUsers() {
+        return Response.success(userService.findAll());
+    }
+
 
     @GetMapping("/{id}")
     public Response<UserDto> getUserById(@PathVariable Long id) {
@@ -25,12 +33,12 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Response<UserDto> createUser(@RequestBody @Valid CreateUserRequest userRequest) {
-        return Response.success(userService.create(userDto));
+        return Response.success(userService.create(userRequest));
     }
 
     @PutMapping("/{id}")
     public Response<UserDto> updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserRequest userRequest) {
-        return Response.success(userService.update(id, userDto));
+        return Response.success(userService.update(id, userRequest));
     }
 
     @DeleteMapping("/{id}")
