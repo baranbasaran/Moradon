@@ -1,6 +1,5 @@
 package com.baranbasaran.cheaperbook.controller.request.User;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -35,7 +34,6 @@ public class UserRequest {
 
         private String profilePicture;
 
-        @NotNull(message = "Birth date cannot be null")
         private LocalDate birthDate;
 
         private String phoneNumber;

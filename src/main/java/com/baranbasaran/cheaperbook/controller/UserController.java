@@ -24,7 +24,6 @@ public class UserController {
         return Response.success(userService.findAll());
     }
 
-
     @GetMapping("/{id}")
     public Response<UserDto> getUserById(@PathVariable Long id) {
         return Response.success(userService.findById(id));
@@ -46,4 +45,8 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userService.delete(id);
     }
+
+
 }
+
+// follow,unfollow, getFollowers,getFollowings, getBooks, getBookById, createBook, updateBook, deleteBook

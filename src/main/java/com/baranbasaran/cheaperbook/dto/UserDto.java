@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,7 +20,7 @@ public class UserDto {
     private String username;
     private String password;
     private String phoneNumber;
-
+    private LocalDate birthDate;
     private AddressDto address;
 
     public static UserDto from(User user) {
@@ -30,6 +32,7 @@ public class UserDto {
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .phoneNumber(user.getPhoneNumber())
+                .birthDate(user.getBirthDate())
                 .address(AddressDto.builder()
                         .street(user.getAddress().getStreet())
                         .city(user.getAddress().getCity())

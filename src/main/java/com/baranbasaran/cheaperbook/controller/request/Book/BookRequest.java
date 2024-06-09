@@ -24,11 +24,10 @@ public class BookRequest {
     @Size(min = 1, max = 1000, message = "must be between 1 and 1000 characters")
     private String description;
 
-    private String owner;
-
     @DecimalMin(value = "0.0", message = "must be greater than 0")
     private BigDecimal price;
 
     @Pattern(regexp = "^([0-9]{10}|[0-9]{13})$", message = "must be 10 or 13 digits")
     private String isbn;
+
 }

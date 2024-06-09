@@ -1,15 +1,19 @@
 package com.baranbasaran.cheaperbook.model;
 
 import com.baranbasaran.cheaperbook.common.model.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Filter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDate;
 import java.util.List;
 
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NoArgsConstructor
-@AllArgsConstructor  // Add this line
+@AllArgsConstructor
 @Builder
 @Getter
 @Setter
@@ -36,8 +40,8 @@ public class User extends BaseEntity {
     @Column
     private String profilePicture;
 
-    // assuming a user can have many books
     @OneToMany(mappedBy = "owner")
+    @JsonManagedReference
     private List<Book> books;
 
     @Column(nullable = false)
@@ -49,6 +53,16 @@ public class User extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
+
+    public void addBook(Book book) {
+        this.books.add(book);
+        book.setOwner(this);
+    }
+
+    public void removeBook(Book book) {
+        this.books.remove(book);
+        book.setOwner(null);
+    }
 
     public boolean isValid() {
         return this.getUsername() != null && this.getPassword() != null && this.getEmail() != null;

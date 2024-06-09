@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface GoogleBookApiClient {
 
     @GetMapping("/volumes?q=isbn:{isbn}")
-    GoogleBookResponse getBookByIsbn(@PathVariable String isbn);
+    GoogleBookResponse getBookDataByIsbn(@PathVariable String isbn);
 }

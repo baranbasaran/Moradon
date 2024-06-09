@@ -13,43 +13,42 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/books")
+@RequestMapping("/v1/users/{userId}/books")
 @RequiredArgsConstructor
 public class BookController {
 
     private final BookService bookService;
 
     @GetMapping("/api/search")
-    public Response<BookDto> getBookDataByIsbnFromApi(@RequestParam String isbn) {
-        return Response.success(bookService.getBookDataByIsbnFromApi(isbn));
+    public Response<BookDto> getBookByIsbn(@RequestParam String isbn) {
+        return Response.success(bookService.getBookByIsbn(isbn));
     }
-
     @GetMapping
-    public Response<List<BookDto>> getBooks() {
-        return Response.success(bookService.findAll());
-    }
-
-    @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Response<BookDto> getBookById(@PathVariable Long id) {
-        return Response.success(bookService.findById(id));
+    public Response<List<BookDto>> getBooksByUserId(@PathVariable Long userId) {
+        return Response.success(bookService.findAllBooksByUserId(userId));
     }
 
     @PostMapping
-    public Response<BookDto> addBook(@RequestBody @Valid CreateBookRequest bookRequest) {
-        return Response.success(bookService.create(bookRequest));
+    @ResponseStatus(HttpStatus.CREATED)
+    public Response<BookDto> createBookForUser(@PathVariable Long userId, @RequestBody @Valid CreateBookRequest bookRequest) {
+        return Response.success(bookService.addBookUser(userId, bookRequest));
     }
 
-    @PutMapping("/{id}")
-    public Response<BookDto> updateBook(@PathVariable Long id, @RequestBody @Valid UpdateBookRequest bookRequest) {
-        return Response.success(bookService.update(id, bookRequest));
+    @GetMapping("{bookId}")
+    public Response<BookDto> getBookByUserIdAndBookId(@PathVariable Long userId, @PathVariable Long bookId) {
+        return Response.success(bookService.findBookByIdAndUserId(bookId, userId));
     }
 
-    @DeleteMapping("/{id}")
+
+    @PutMapping("{bookId}")
+    public Response<BookDto> updateBookForUser(@PathVariable Long userId, @PathVariable Long bookId, @RequestBody @Valid UpdateBookRequest bookRequest) {
+        return Response.success(bookService.updateBookForUser(userId, bookId, bookRequest));
+    }
+
+    @DeleteMapping("{bookId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Response<Void> deleteBook(@PathVariable Long id) {
-        bookService.delete(id);
-        return Response.success(null);
+    public void deleteBookForUser(@PathVariable Long userId, @PathVariable Long bookId) {
+        bookService.deleteBookForUser(userId, bookId);
     }
 
 }

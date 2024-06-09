@@ -20,7 +20,8 @@ public class BookDto {
     private String author;
     private List<String> genre;
     private String description;
-    private String owner;
+    private String username;
+    private String profilePicture;
     private BigDecimal price;
     private Status status;
     private String isbn;
@@ -35,13 +36,14 @@ public class BookDto {
                 .author(book.getAuthor())
                 .genre(book.getGenre())
                 .description(book.getDescription())
-                .owner(book.getOwner())
                 .price(book.getPrice())
                 .status(book.getStatus())
                 .isbn(book.getIsbn())
                 .coverImage(book.getCoverImage())
                 .publisher(book.getPublisher())
                 .publicationYear(book.getPublicationYear())
+                .username(book.getOwner().getUsername())
+                .profilePicture(book.getOwner().getProfilePicture())
                 .build();
     }
 }

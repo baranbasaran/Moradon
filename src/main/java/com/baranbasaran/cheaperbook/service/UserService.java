@@ -29,7 +29,6 @@ public class UserService {
                 .toList();
     }
 
-
     public UserDto findById(Long id) {
         return UserDto.from(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
@@ -40,7 +39,6 @@ public class UserService {
     }
 
     public UserDto update(Long id, UpdateUserRequest userRequest) {
-        userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         userRequest.setId(id);
         return UserDto.from(userRepository.save(updateUser(userRequest)));
     }
@@ -48,21 +46,39 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    }
+
     @Transactional
     public User updateUser(UpdateUserRequest request) {
-        if (request == null || !request.isValid()) {
-            throw new InvalidRequestException("Invalid request");
-        }
-
         User user = userRepository.findById(request.getId())
                 .orElseThrow(() -> new UserNotFoundException(request.getId()));
-        user.setName(request.getName());
-        user.setSurname(request.getSurname());
-        user.setEmail(request.getEmail());
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setAddress(request.getAddress().to());
+
+        if (request.getName() != null) {
+            user.setName(request.getName());
+        }
+        if (request.getSurname() != null) {
+            user.setSurname(request.getSurname());
+        }
+        if (request.getEmail() != null) {
+            user.setEmail(request.getEmail());
+        }
+        if (request.getUsername() != null) {
+            user.setUsername(request.getUsername());
+        }
+        if (request.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        if (request.getPhoneNumber() != null) {
+            user.setPhoneNumber(request.getPhoneNumber());
+        }
+        if (request.getAddress() != null) {
+            user.setAddress(request.getAddress().to());
+        }
+        if (request.getBirthDate() != null) {
+            user.setBirthDate(request.getBirthDate());
+        }
         return user;
     }
 

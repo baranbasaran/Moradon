@@ -1,5 +1,6 @@
 package com.baranbasaran.cheaperbook.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.baranbasaran.cheaperbook.common.model.BaseEntity;
 import com.baranbasaran.cheaperbook.dto.BookDto;
 import com.baranbasaran.cheaperbook.enums.Status;
@@ -24,14 +25,17 @@ public class Book extends BaseEntity {
     @Column(nullable = false)
     private String author;
 
+    @ElementCollection
     @Column(nullable = false)
     private List<String> genre;
 
     @Column(nullable = false, length = 1000, columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
-    private String owner;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "owner_id")
+    @JsonBackReference
+    private User owner;
 
     @Column(nullable = false)
     private BigDecimal price;
@@ -52,6 +56,10 @@ public class Book extends BaseEntity {
     @Column
     private Integer publicationYear;
 
+    public void transferOwnership(User newOwner) {
+        this.owner = newOwner;
+    }
+
     public Book mergeFromDto(BookDto book) {
         if (book.getTitle() != null) {
             this.setTitle(book.getTitle());
@@ -64,9 +72,6 @@ public class Book extends BaseEntity {
         }
         if (book.getDescription() != null) {
             this.setDescription(book.getDescription());
-        }
-        if (book.getOwner() != null) {
-            this.setOwner(book.getOwner());
         }
         if (book.getPrice() != null) {
             this.setPrice(book.getPrice());
