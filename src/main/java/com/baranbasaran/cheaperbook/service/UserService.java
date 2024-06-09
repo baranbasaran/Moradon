@@ -111,4 +111,36 @@ public class UserService {
         }
         return user;
     }
+
+    public void followUser(Long userId, Long userToFollowId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User userToFollow = userRepository.findById(userToFollowId).orElseThrow(() -> new UserNotFoundException(userToFollowId));
+
+        user.follow(userToFollow);
+
+        userRepository.save(user);
+    }
+
+    public void unfollowUser(Long userId, Long userToUnfollowId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User userToUnfollow = userRepository.findById(userToUnfollowId).orElseThrow(() -> new UserNotFoundException(userToUnfollowId));
+
+        user.unfollow(userToUnfollow);
+
+        userRepository.save(user);
+    }
+
+    public List<UserDto> getFollowers(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        return user.getFollowers().stream()
+                .map(UserDto::from)
+                .toList();
+    }
+
+    public List<UserDto> getFollowings(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        return user.getFollowing().stream()
+                .map(UserDto::from)
+                .toList();
+    }
 }

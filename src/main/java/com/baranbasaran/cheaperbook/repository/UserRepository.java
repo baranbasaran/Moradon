@@ -14,4 +14,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM users u WHERE u.id = ?1 AND u.deleted = false")
     Optional<User> findById(Long id);
+
 }

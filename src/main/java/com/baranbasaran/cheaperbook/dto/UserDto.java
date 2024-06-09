@@ -23,6 +23,7 @@ public class UserDto {
     private LocalDate birthDate;
     private AddressDto address;
 
+
     public static UserDto from(User user) {
         return UserDto.builder()
                 .id(user.getId())

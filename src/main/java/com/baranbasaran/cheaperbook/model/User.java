@@ -8,7 +8,9 @@ import org.hibernate.annotations.Filter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -53,6 +55,27 @@ public class User extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_followers",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id")
+    )
+    private Set<User> followers = new HashSet<>();
+
+    @ManyToMany(mappedBy = "followers")
+    private Set<User> following = new HashSet<>();
+
+    public void follow(User userToFollow) {
+        following.add(userToFollow);
+        userToFollow.getFollowers().add(this);
+    }
+
+    public void unfollow(User userToUnfollow) {
+        following.remove(userToUnfollow);
+        userToUnfollow.getFollowers().remove(this);
+    }
 
     public void addBook(Book book) {
         this.books.add(book);

@@ -46,7 +46,24 @@ public class UserController {
         userService.delete(id);
     }
 
+    @PostMapping("{userId}/follow/{userToFollowId}")
+    public void followUser(@PathVariable Long userId, @PathVariable Long userToFollowId) {
+        userService.followUser(userId, userToFollowId);
+    }
+
+    @PostMapping("{userId}/unfollow/{userToUnfollowId}")
+    public void unfollowUser(@PathVariable Long userId, @PathVariable Long userToUnfollowId) {
+        userService.unfollowUser(userId, userToUnfollowId);
+    }
+
+    @GetMapping("{userId}/followers")
+    public Response<List<UserDto>> getFollowers(@PathVariable Long userId) {
+        return Response.success(userService.getFollowers(userId));
+    }
+
+    @GetMapping("{userId}/followings")
+    public Response<List<UserDto>> getFollowings(@PathVariable Long userId) {
+        return Response.success(userService.getFollowings(userId));
+    }
 
 }
-
-// follow,unfollow, getFollowers,getFollowings, getBooks, getBookById, createBook, updateBook, deleteBook
