@@ -42,7 +42,7 @@ public class BookController {
 
     @PutMapping("{bookId}")
     public Response<BookDto> updateBookForUser(@PathVariable Long userId, @PathVariable Long bookId, @RequestBody @Valid UpdateBookRequest bookRequest) {
-        return Response.success(bookService.updateBookForUser(userId, bookId, bookRequest));
+        return Response.success(bookService.updateBookForUser(bookId, bookRequest));
     }
 
     @DeleteMapping("{bookId}")
