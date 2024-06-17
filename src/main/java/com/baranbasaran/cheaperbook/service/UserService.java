@@ -1,6 +1,5 @@
 package com.baranbasaran.cheaperbook.service;
 
-import com.baranbasaran.cheaperbook.controller.request.User.CreateUserRequest;
 import com.baranbasaran.cheaperbook.controller.request.User.UpdateUserRequest;
 import com.baranbasaran.cheaperbook.controller.request.User.UserRequest;
 import com.baranbasaran.cheaperbook.dto.UserDto;
@@ -20,11 +19,38 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class UserService {
+    private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public String login(String email, String password) {
+        if (!userExistsByEmail(email)) {
+            throw new UserNotFoundException(email);
+        }
+        if (!userExistsWithEmailAndPassword(email, password)) {
+            throw new InvalidRequestException("Invalid password");
+        }
+        authenticationService.authenticate(email, password);
+        return authenticationService.getBasicAuthenticationToken(email, password);
+    }
+
+    @CachePut(value = "users", key = "'user_' + #email")
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException(email));
+    }
+
+    private boolean userExistsByEmail(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    private boolean userExistsWithEmailAndPassword(String email, String password) {
+        return userRepository.findByEmail(email)
+            .map(user -> passwordEncoder.matches(password, user.getPassword()))
+            .orElse(false);
+    }
 
     public List<UserDto> findAll() {
         return userRepository.findAll().stream()
@@ -36,7 +62,7 @@ public class UserService {
         return UserDto.from(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
 
-    public UserDto create(CreateUserRequest userRequest) {
+    public UserDto create(UserRequest userRequest) {
         userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         return UserDto.from(userRepository.save(createOrGetExistingUserFromRequest(userRequest)));
     }
