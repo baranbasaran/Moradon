@@ -3,12 +3,11 @@
   position: fixed;
   width: 250px;
   height: 100vh;
-  top: 0;
-  left: 350px;
   background-color: var(--primary-bg-color);
   padding: var(--padding-medium);
   color: var(--primary-text-color);
   z-index: 1000;
+  transition: width 0.3s ease;
 }
 
 .sidebar h2 {
@@ -33,7 +32,9 @@
   padding: var(--padding-small);
   border-radius: var(--border-radius);
   font-size: var(--font-size-large);
+  transition: background-color 0.3s ease;
 }
+
 .sidebar nav ul li a i {
   margin-right: var(--margin-medium);
   font-size: var(--font-size-large);
@@ -41,7 +42,6 @@
 
 .sidebar nav ul li a:hover {
   background-color: var(--secondary-bg-color);
-  transition: background-color 0.3s ease;
   border-radius: 30px;
 }
 
@@ -57,4 +57,52 @@
 
 .sidebar .post-button:hover {
   background-color: var(--accent-hover-color);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 80px; /* Collapse sidebar */
+  }
+
+  .sidebar h2 {
+    display: none; /* Hide sidebar title */
+  }
+
+  .sidebar nav ul li a .link-text {
+    display: none; /* Hide link text on smaller screens */
+  }
+
+  .sidebar nav ul li a i {
+    margin: 0 auto; /* Center icons */
+    font-size: 1.5rem;
+  }
+
+  .sidebar .post-button {
+    width: 100%; /* Full width button */
+  }
+}
+
+@media (max-width: 500px) {
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    width: 100vw; /* Make the sidebar a bottom nav bar */
+    height: auto;
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
+
+  .sidebar nav ul {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .sidebar nav ul li {
+    margin: 0;
+  }
+
+  .sidebar .post-button {
+    display: none; /* Hide post button on very small screens */
+  }
 }

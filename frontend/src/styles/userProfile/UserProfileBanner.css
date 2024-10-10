@@ -1,8 +1,0 @@
-.profile-banner {
-  background-color: var(--primary-color);
-  height: 150px;
-  width: 100%;
-  background-image: url("https://via.placeholder.com/600x150"); /* Optional, replace with user's cover image */
-  background-size: cover;
-  background-position: center;
-}

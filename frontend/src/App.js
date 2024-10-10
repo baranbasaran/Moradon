@@ -1,12 +1,11 @@
 // src/App.js
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import UserProfilePage from "./pages/UserProfilePage";
 import WelcomePage from "./pages/WelcomePage";
 import PrivateRoute from "./components/PrivateRoute";
-import Sidebar from "./components/Sidebar";
 import SignInModal from "./components/SignInModal";
 import SignUpModal from "./components/SignUpModal";
+import HomePage from "./pages/HomePage";
 
 function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -25,7 +24,7 @@ function App() {
 
   return (
     <div className="app-layout">
-      {isAuthenticated && <Sidebar />} {/* Sidebar visible only if logged in */}
+      {isAuthenticated} {/* Sidebar visible only if logged in */}
       <div className="content">
         <Routes location={background || location}>
           {!isAuthenticated ? (
@@ -38,14 +37,13 @@ function App() {
           ) : (
             <>
               <Route
-                path="/profile"
+                path="/"
                 element={
                   <PrivateRoute>
-                    <UserProfilePage />
+                    <HomePage />
                   </PrivateRoute>
                 }
               />
-              <Route path="*" element={<UserProfilePage />} />
             </>
           )}
         </Routes>

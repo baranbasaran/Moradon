@@ -1,26 +1,29 @@
 import React from "react";
-import "../styles/Sidebar.css"; // Style this accordingly
-import LogoutButton from "./LogoutButton"; // Import the LogoutButton
+import "../styles/Sidebar.css"; // Sidebar styles
 
 const Sidebar = () => {
   return (
     <div className="sidebar">
-      <h2>CheaperBook</h2>
+      <h2>Moradon</h2>
       <nav>
         <ul>
-          {/* Sidebar links */}
           <li>
-            <a href="/profile">Profile</a>
+            <a href="/profile">
+              <i className="fas fa-user"></i>
+              <span className="link-text">Profile</span>
+            </a>
           </li>
           <li>
-            <a href="/books">Books</a>
+            <a href="/books">
+              <i className="fas fa-book"></i>
+              <span className="link-text">Books</span>
+            </a>
           </li>
           <li>
-            <a href="/settings">Settings</a>
-          </li>
-          {/* Logout button */}
-          <li>
-            <LogoutButton />
+            <a href="/settings">
+              <i className="fas fa-cog"></i>
+              <span className="link-text">Settings</span>
+            </a>
           </li>
         </ul>
       </nav>

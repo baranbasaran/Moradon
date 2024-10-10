@@ -1,5 +1,0 @@
-/* Login.css */
-.login-button {
-  @extend .btn;
-  background-color: var(--button-primary-color);
-}

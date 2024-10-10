@@ -1,0 +1,69 @@
+/* HomePage.css */
+.homepage-container {
+  display: flex;
+  justify-content: center; /* Centers the content */
+  padding: var(--padding-large); /* Add padding for spacing */
+}
+
+.homepage-content {
+  padding: var(--padding-large);
+  width: 100%;
+  max-width: 1200px; /* Restrict the width of the content to a maximum */
+  background-color: var(--primary-bg-color);
+  display: flex; /* Flexbox to arrange sidebar and content next to each other */
+  gap: 20px; /* Gap between sidebar and content */
+}
+
+/* Sidebar container */
+.sidebar-container {
+  width: 250px;
+  border-right: 1px solid #e1e8ed; /* Add a separator line */
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
+}
+
+.main-content {
+  flex-grow: 1; /* Make main content take up remaining space */
+  background-color: var(--primary-bg-color);
+  padding: var(--padding-large);
+  border-radius: var(--border-radius); /* For cleaner look */
+}
+
+@media (max-width: 1024px) {
+  .homepage-container {
+    padding: var(--padding-medium);
+  }
+
+  .homepage-content {
+    max-width: 100%; /* Allow content to use full width on smaller screens */
+  }
+
+  .sidebar-container {
+    width: 200px; /* Adjust sidebar size on smaller screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-container {
+    width: 80px; /* Adjust sidebar for mobile screens */
+  }
+
+  .homepage-content {
+    margin-left: 0; /* Remove margins */
+  }
+}
+
+@media (max-width: 500px) {
+  .homepage-content {
+    flex-direction: column; /* Stack content and sidebar vertically on small screens */
+  }
+
+  .main-content {
+    padding-bottom: 50px; /* Add space for bottom nav if any */
+  }
+
+  .sidebar-container {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e1e8ed; /* Add separator line at the bottom for mobile */
+  }
+}

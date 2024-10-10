@@ -1,0 +1,66 @@
+/* PostComposer.css */
+.post-composer {
+  background-color: var(--primary-bg-color);
+  border-radius: 8px;
+  padding: var(--padding-medium);
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: var(--margin-medium);
+  display: flex;
+  flex-direction: column;
+}
+
+.post-composer textarea {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--primary-bg-color);
+  padding: var(--padding-small);
+  resize: none;
+  font-size: var(--font-size-medium);
+}
+
+.post-composer textarea:focus {
+  outline: none;
+}
+
+.post-composer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--margin-small);
+}
+
+.post-composer-actions .media-buttons {
+  display: flex;
+  gap: var(--gap-medium);
+}
+
+.post-composer-actions .media-buttons button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--accent-color);
+}
+
+.post-composer-actions .media-buttons button:hover {
+  color: var(--accent-color);
+}
+
+.post-composer-actions .post-button {
+  background-color: var(--accent-color);
+  color: var(--primary-bg-color);
+  padding: var(--padding-small) var(--padding-medium);
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-medium);
+}
+
+.post-composer-actions .post-button:disabled {
+  background-color: var(--accent-color);
+}
+
+.post-composer-actions .post-button:hover:not(:disabled) {
+  background-color: var(--accent-color);
+}

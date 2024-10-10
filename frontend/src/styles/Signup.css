@@ -1,5 +1,0 @@
-/* Signup.css */
-.signup-button {
-  @extend .btn;
-  background-color: var(--button-secondary-color);
-}
