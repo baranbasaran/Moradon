@@ -1,0 +1,60 @@
+/* Sidebar.css */
+.sidebar {
+  position: fixed;
+  width: 250px;
+  height: 100vh;
+  top: 0;
+  left: 350px;
+  background-color: var(--primary-bg-color);
+  padding: var(--padding-medium);
+  color: var(--primary-text-color);
+  z-index: 1000;
+}
+
+.sidebar h2 {
+  text-align: center;
+  color: var(--primary-text-color);
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar nav ul li {
+  margin: var(--margin-small) 0;
+}
+
+.sidebar nav ul li a {
+  text-decoration: none;
+  color: var(--primary-text-color);
+  display: flex;
+  align-items: center;
+  padding: var(--padding-small);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-large);
+}
+.sidebar nav ul li a i {
+  margin-right: var(--margin-medium);
+  font-size: var(--font-size-large);
+}
+
+.sidebar nav ul li a:hover {
+  background-color: var(--secondary-bg-color);
+  transition: background-color 0.3s ease;
+  border-radius: 30px;
+}
+
+.sidebar .post-button {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  padding: var(--padding-small) var(--padding-medium);
+  text-align: center;
+  border-radius: 30px;
+  margin-top: var(--padding-medium);
+  font-size: var(--font-size-large);
+}
+
+.sidebar .post-button:hover {
+  background-color: var(--accent-hover-color);
+}

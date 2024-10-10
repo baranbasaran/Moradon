@@ -1,0 +1,105 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--white-color);
+  padding: var(--padding-large);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 550px;
+  z-index: 1001;
+}
+
+.modal-header {
+  font-family: var(--font-family);
+  font-size: calc(var(--font-size-large) + 4px);
+  font-weight: bold;
+  color: var(--primary-text-color);
+  margin-bottom: var(--margin-medium);
+  text-align: center;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-medium);
+}
+
+.input-container {
+  position: relative;
+  margin-bottom: var(--margin-small);
+}
+
+.input-container input {
+  width: 100%;
+  padding: var(--padding-small);
+  font-size: var(--font-size-medium);
+  border: 1px solid var(--secondary-bg-color);
+  border-radius: var(--border-radius);
+  outline: none;
+}
+
+.input-container label {
+  position: absolute;
+  top: 50%;
+  left: var(--padding-small);
+  transform: translateY(-50%);
+  transition: 0.2s ease;
+  font-size: var(--font-size-medium);
+  color: var(--secondary-text-color);
+  pointer-events: none;
+}
+
+.input-container input:focus + .input-label,
+.input-container input:not(:placeholder-shown) + .input-label {
+  top: -10px;
+  left: var(--padding-small);
+  font-size: var(--font-size-medium);
+  color: var(--accent-color);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--margin-medium);
+}
+
+.button-primary {
+  background-color: var(--accent-color);
+  color: var(--white-color);
+  padding: var(--padding-small);
+  font-size: var(--font-size-medium);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.button-primary:hover {
+  background-color: var(--accent-hover-color);
+}
+
+.button-secondary {
+  background-color: var(--error-color);
+  color: var(--white-color);
+  padding: var(--padding-small);
+  font-size: var(--font-size-medium);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.button-secondary:hover {
+  background-color: darken(var(--error-color), 10%);
+}
