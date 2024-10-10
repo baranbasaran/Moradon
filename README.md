@@ -1,6 +1,6 @@
-# CheaperBook: A Social Media Platform for Book Lovers
+# Moradon: A Social Media Platform for Book Lovers
 
-CheaperBook is a social media platform designed specifically for book enthusiasts. It aims to connect people based on their shared interest in books.
+Moradon is a social media platform designed specifically for book enthusiasts. It aims to connect people based on their shared interest in books.
 
 ## Features
 
