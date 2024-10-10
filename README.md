@@ -4,7 +4,7 @@ Moradon is a social media platform designed specifically for book enthusiasts. I
 
 ## Features
 
-- **Book Exchange**: At the heart of CheaperBook is the ability to exchange books. Users can list the books they have and are willing to exchange. They can browse through the books listed by other users and initiate an exchange if they find something they like. In the future, we plan to expand this feature to allow users to sell their books as well.
+- **Book Exchange**: At the heart of Moradon is the ability to exchange books. Users can list the books they have and are willing to exchange. They can browse through the books listed by other users and initiate an exchange if they find something they like. In the future, we plan to expand this feature to allow users to sell their books as well.
 
 - **Friendship**: Users can add each other as friends. This allows them to see each other's posts and book listings, and to engage in book exchanges.
 
@@ -12,7 +12,7 @@ Moradon is a social media platform designed specifically for book enthusiasts. I
 
 ## Future Plans
 
-We are constantly working to improve and expand CheaperBook. Here are some of the features we plan to add in the future:
+We are constantly working to improve and expand Moradon. Here are some of the features we plan to add in the future:
 
 - **Book Selling**: In addition to exchanging books, users will be able to sell their books directly through the platform.
 
@@ -22,7 +22,7 @@ We are constantly working to improve and expand CheaperBook. Here are some of th
 - **Messaging**: Users can send private messages to each other. This can be used to discuss book exchanges, or simply to chat about shared interests.
 - **Timeline**: Each user has a personal timeline where they can post pictures or text. This is a great place to share thoughts on recent reads, post pictures of book covers, or discuss literary topics.
 
-We hope you enjoy using CheaperBook and we look forward to seeing you on the platform!
+We hope you enjoy using Moradon and we look forward to seeing you on the platform!
 
 ## Contact
 
