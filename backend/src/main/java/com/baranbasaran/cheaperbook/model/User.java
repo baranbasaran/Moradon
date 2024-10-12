@@ -42,7 +42,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private LocalDate birthDate;
 
-    @Column(nullable = true, unique = true)
+    @Column(length = 20, unique = true)
     private String phoneNumber;
 
     @OneToOne(cascade = CascadeType.ALL)

@@ -1,29 +1,28 @@
 package com.baranbasaran.cheaperbook.controller;
 
-import com.baranbasaran.cheaperbook.controller.request.AuthLoginRequest;
+import com.baranbasaran.cheaperbook.controller.request.User.AuthLoginRequest;
 import com.baranbasaran.cheaperbook.controller.request.User.CreateUserRequest;
-import com.baranbasaran.cheaperbook.dto.UserDto;
-import com.baranbasaran.cheaperbook.service.UserService;
+import com.baranbasaran.cheaperbook.dto.AuthResponse;
+import com.baranbasaran.cheaperbook.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
-    private final UserService userService;
-
-    @PostMapping("/login")
-    public String login(@RequestBody @Valid AuthLoginRequest authLoginRequest) {
-        return userService.login(authLoginRequest.getEmail(), authLoginRequest.getPassword());
-    }
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.CREATED)
-    public String signup(@RequestBody @Valid CreateUserRequest createUserRequest) {
-        return userService.signUp(createUserRequest);
+    public ResponseEntity<AuthResponse> signUp(@Valid @RequestBody CreateUserRequest request) {
+        AuthResponse response = authenticationService.signUp(request);
+        return ResponseEntity.ok(response);
     }
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthLoginRequest request) {
+        AuthResponse response = authenticationService.login(request);
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -1,6 +1,37 @@
+// authSlice.js
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiClient from "../api/axios"; // Your axios config
+import { jwtDecode } from "jwt-decode"; // Correct import
+import { removeToken, setToken, getToken } from "../api/utils/tokenUtils";
 
+// Token validation function
+const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const decoded = jwtDecode(token);
+    return decoded.exp * 1000 < Date.now(); // Check if token is expired
+  } catch (error) {
+    return true; // If token decoding fails, treat it as expired
+  }
+};
+
+// Initial state
+const initialState = {
+  user: null,
+  token: getToken() || null,
+  isAuthenticated: !!getToken(),
+  status: "idle", // idle, loading, succeeded, failed
+  error: null,
+};
+
+// Logout action
+export const logout = () => (dispatch) => {
+  removeToken();
+  dispatch(authSlice.actions.logout());
+};
+
+// Signup async action
 export const signup = createAsyncThunk(
   "auth/signup",
   async (
@@ -8,7 +39,7 @@ export const signup = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await apiClient.post("/v1/auth/signup", {
+      const response = await apiClient.post("/auth/signup", {
         email,
         password,
         name,
@@ -16,61 +47,56 @@ export const signup = createAsyncThunk(
         birthDate,
       });
 
-      localStorage.setItem("token", response.data);
+      const { token, user } = response.data;
+      setToken(token); // Save token to storage
 
-      return response.data;
+      return { user, token };
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Signup failed";
+      return rejectWithValue(errorMessage);
     }
   }
 );
 
-// Asynchronous action to handle login
+// Login async action
 export const login = createAsyncThunk(
-  "auth/loginUser",
-  async ({ email, password }, { rejectWithValue }) => {
+  "auth/login",
+  async (credentials, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post("/v1/auth/login", {
-        email,
-        password,
-      });
+      const response = await apiClient.post("/auth/login", credentials);
 
-      // Save token in localStorage or cookies
-      localStorage.setItem("token", response.data);
+      const { token, user } = response.data;
+      setToken(token); // Save token to storage
 
-      // Return the user data or token to the store
-      return response.data;
+      return { user, token };
     } catch (error) {
-      // Handle error if login fails
-      return rejectWithValue(error.response.data);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Login failed";
+      return rejectWithValue(errorMessage);
     }
   }
 );
 
-// Asynchronous action to handle logout if necessary
-// Optional: you might handle logout only on the client side, so this action is optional.
-
+// Create the auth slice
 const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    user: null,
-    token: localStorage.getItem("token") || null,
-    isAuthenticated: !!localStorage.getItem("token"), // Set to true if token exists
-    status: "idle", // idle, loading, succeeded, failed
-    error: null,
-  },
+  initialState,
   reducers: {
     logout(state) {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("token"); // Clear token from localStorage
+      state.status = "idle"; // Reset status on logout
+      state.error = null; // Clear error on logout
     },
   },
   extraReducers: (builder) => {
     builder
+      // Login cases
       .addCase(login.pending, (state) => {
         state.status = "loading";
+        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.status = "succeeded";
@@ -80,8 +106,9 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.payload.message;
+        state.error = action.payload; // Error message from rejectWithValue
       })
+      // Signup cases
       .addCase(signup.pending, (state) => {
         state.status = "loading";
         state.error = null;
@@ -94,11 +121,28 @@ const authSlice = createSlice({
       })
       .addCase(signup.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.payload.message;
+        state.error = action.payload; // Error message from rejectWithValue
       });
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout: logoutAction } = authSlice.actions;
+
+// Middleware to check token expiration and logout if expired
+export const tokenMiddleware = (store) => (next) => (action) => {
+  const result = next(action);
+
+  const state = store.getState();
+  const token = state.auth.token;
+
+  if (state.auth.isAuthenticated && isTokenExpired(token)) {
+    // Prevent infinite loop by checking if we're already processing logout
+    if (action.type !== "auth/logout") {
+      store.dispatch(logoutAction());
+    }
+  }
+
+  return result;
+};
 
 export default authSlice.reducer;

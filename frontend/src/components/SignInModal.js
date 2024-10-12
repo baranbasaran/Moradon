@@ -1,18 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import "../styles/SignInModal.css"; // Ensure the CSS for modal styling is applied
+import "../styles/SignInModal.css";
 import { login } from "../redux/authSlice";
-import { useState } from "react";
+
 const SignInModal = ({ onClose }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [formData, setFormData] = useState({});
+
+  // Initialize formData with default values
+  const [formData, setFormData] = useState({
+    identifier: "",
+    password: "",
+  });
+
   const handleClose = () => {
     onClose();
     navigate("/"); // Redirect to the welcome page when closed
   };
-  const [useEmail, setUseEmail] = useState(true);
 
   const handleChange = (e) => {
     setFormData({
@@ -20,13 +25,17 @@ const SignInModal = ({ onClose }) => {
       [e.target.name]: e.target.value,
     });
   };
-  const toggleUseEmail = () => {
-    setUseEmail(!useEmail);
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(login(formData));
+
+    // Prepare credentials
+    const credentials = {
+      identifier: formData.identifier,
+      password: formData.password,
+    };
+
+    dispatch(login(credentials));
   };
 
   return (
@@ -38,17 +47,17 @@ const SignInModal = ({ onClose }) => {
           <div className="modal-content">
             <div className="input-container">
               <input
-                autoComplete="new-contact"
-                type={useEmail ? "email" : "text"}
-                id="signup-contact"
-                name={useEmail ? "email" : "phone"}
+                autoComplete="username"
+                type="text"
+                id="signin-identifier"
+                name="identifier"
                 placeholder=" "
-                value={useEmail ? formData.email : formData.phone}
+                value={formData.identifier}
                 onChange={handleChange}
                 required
               />
-              <label className="input-label" htmlFor="signup-contact">
-                {useEmail ? "Email" : "Phone"}
+              <label className="input-label" htmlFor="signin-identifier">
+                Email, Username, or Phone
               </label>
             </div>
             <div className="input-container">
@@ -58,15 +67,17 @@ const SignInModal = ({ onClose }) => {
                 id="signin-password"
                 placeholder=" "
                 onChange={handleChange}
+                value={formData.password}
+                autoComplete="current-password"
+                required
               />
               <label className="input-label" htmlFor="signin-password">
                 Password
               </label>
             </div>
-            <p className="toggle-contact" onClick={toggleUseEmail}>
-              {useEmail ? "Use phone instead" : "Use email instead"}
-            </p>
-            <button className="button-primary">Log in</button>
+            <button type="submit" className="button-primary">
+              Log in
+            </button>
           </div>
         </form>
         <a href="#" className="forgot-password">

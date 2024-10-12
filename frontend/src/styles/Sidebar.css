@@ -4,7 +4,7 @@
   width: 250px;
   height: 100vh;
   background-color: var(--primary-bg-color);
-  padding: var(--padding-medium);
+  padding-left: var(--padding-extra-large);
   color: var(--primary-text-color);
   z-index: 1000;
   transition: width 0.3s ease;

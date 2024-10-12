@@ -9,6 +9,7 @@ import com.baranbasaran.cheaperbook.exception.UserAlreadyExistsException;
 import com.baranbasaran.cheaperbook.exception.UserNotFoundException;
 import com.baranbasaran.cheaperbook.model.User;
 import com.baranbasaran.cheaperbook.repository.UserRepository;
+import com.baranbasaran.cheaperbook.security.JwtTokenUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -24,6 +25,7 @@ import java.util.List;
 public class UserService {
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
+    private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
 
     public String login(String email, String password) {
@@ -34,8 +36,10 @@ public class UserService {
             throw new InvalidRequestException("Invalid email or password");
         }
 
-        return authenticationService.getBasicAuthenticationToken(email, password);
+        // Return JWT token after successful authentication
+        return jwtTokenUtil.generateToken(user.getEmail());
     }
+
     public String signUp(CreateUserRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException("User with this email already exists");
@@ -51,17 +55,18 @@ public class UserService {
                 .address(request.getAddress() != null ? request.getAddress().to() : null) // Use the 'to' method of AddressRequest
                 .build();
 
-
         userRepository.save(user);
 
-        return authenticationService.getBasicAuthenticationToken(user.getEmail(), user.getPassword());
+        // Return JWT token after successful signup
+        return jwtTokenUtil.generateToken(user.getEmail());
+    }
+    @CachePut(value = "users", key = "'user_' + #email")
+    public UserDto findByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+        return UserDto.from(user);  // Convert to DTO
     }
 
-    @CachePut(value = "users", key = "'user_' + #email")
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
-    }
 
     private boolean userExistsByEmail(String email) {
         return userRepository.findByEmail(email).isPresent();
@@ -97,7 +102,6 @@ public class UserService {
                 .phoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : null) // Handle phone number
                 .address(request.getAddress() != null ? request.getAddress().to() : null) // Use the 'to' method of AddressRequest
                 .build();
-
 
         userRepository.save(user);
 
@@ -146,10 +150,9 @@ public class UserService {
         }
         return user;
     }
-
     @Transactional
     public User createOrGetExistingUserFromRequest(UserRequest request) {
-        if (request == null || !request.isValid()) {
+        if (request == null) {
             throw new InvalidRequestException("Invalid request");
         }
 
@@ -157,20 +160,41 @@ public class UserService {
         if (request.getId() != null) {
             user = userRepository.findById(request.getId())
                     .orElseThrow(() -> new UserNotFoundException(request.getId()));
-        }
-
-        if (user != null) {
             throw new UserAlreadyExistsException("User already exists");
         }
-        user = User.builder()
+
+        // Start building the user
+        User.UserBuilder userBuilder = User.builder()
                 .name(request.getName())
                 .username(request.getUsername())
                 .email(request.getEmail())
-                .password(request.getPassword())
                 .phoneNumber(request.getPhoneNumber())
-                .birthDate(request.getBirthDate())
-                .address(request.getAddress().to())
-                .build();
+                .birthDate(request.getBirthDate());
+
+        // Set address if available
+        if (request.getAddress() != null) {
+            userBuilder.address(request.getAddress().to());
+        }
+
+        // Set password if request has it
+        if (request instanceof CreateUserRequest) {
+            String rawPassword = ((CreateUserRequest) request).getPassword();
+            if (rawPassword != null && !rawPassword.isEmpty()) {
+                String encodedPassword = passwordEncoder.encode(rawPassword);
+                userBuilder.password(encodedPassword);
+            } else {
+                throw new InvalidRequestException("Password is required for creating a new user.");
+            }
+        } else if (request instanceof UpdateUserRequest) {
+            String rawPassword = ((UpdateUserRequest) request).getPassword();
+            if (rawPassword != null && !rawPassword.isEmpty()) {
+                String encodedPassword = passwordEncoder.encode(rawPassword);
+                userBuilder.password(encodedPassword);
+            }
+            // Password is optional for updates
+        }
+
+        user = userBuilder.build();
         return user;
     }
 

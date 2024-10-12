@@ -1,12 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./authSlice"; // Auth slice for login/logout
-import userReducer from "./userSlice"; // User slice for profile
+import authReducer, { tokenMiddleware } from "./authSlice";
+import userReducer from "./userSlice";
+import postReducer from "./postSlice";
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer, // Attach auth slice to the store
-    user: userReducer, // Attach user slice to the store
+    auth: authReducer,
+    user: userReducer,
+    posts: postReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(tokenMiddleware),
 });
 
 export default store;

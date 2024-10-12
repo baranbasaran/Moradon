@@ -1,11 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import apiClient from "../api/axios"; // Your axios config
-
+import apiClient from "../api/axios";
 export const fetchUserProfile = createAsyncThunk(
   "user/fetchUserProfile",
   async (userId) => {
     const response = await apiClient.get(`users/${userId}`);
-    return response.data.data; // Adjust according to your actual API response structure
+    return response.data.data;
   }
 );
 
