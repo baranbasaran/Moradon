@@ -1,7 +1,5 @@
 /* General layout styling */
 .homepage-container {
-  padding-left: var(--padding-extra-large);
-  padding-right: var(--padding-extra-large);
   display: flex;
   justify-content: center;
   width: 100%;
@@ -11,53 +9,65 @@
 /* Sidebar container */
 .sidebar-container {
   width: 250px;
-  border-right: 1px solid #e1e8ed; /* Separator line for the sidebar */
   flex-shrink: 0;
   height: 100vh;
+  border-right: 1px solid #e1e8ed;
 }
 
 /* Main content container */
 .main-content {
   flex-grow: 1;
+  max-width: 600px; /* Set a max-width similar to Twitter's post area */
   background-color: var(--primary-bg-color);
   margin-left: 100px; /* Adjust to accommodate sidebar */
-  padding-right: 300px; /* Add padding inside the main content */
-  border-left: 1px solid #e1e8ed; /* Separator line for the main content */
+  padding-right: 20px;
+  border-left: 1px solid #e1e8ed;
+}
+
+/* Right section */
+.right-section {
+  width: 300px; /* Define width for the right section */
+  flex-shrink: 0;
+  margin-left: 20px;
+  background-color: var(--primary-bg-color);
+}
+
+/* Separator for sections */
+.separator {
+  width: 1px;
+  background-color: #e1e8ed;
 }
 
 @media (max-width: 1024px) {
-  .homepage-container {
-    padding: var(--padding-medium);
-  }
-
   .sidebar-container {
-    width: 200px; /* Adjust sidebar size on smaller screens */
+    width: 200px;
   }
 
-  .main-content {
-    margin-left: 200px;
+  .right-section {
+    display: none;
   }
 }
 
 @media (max-width: 768px) {
   .sidebar-container {
-    width: 80px; /* Adjust sidebar for mobile screens */
+    width: 100px;
   }
 
   .main-content {
-    margin-left: 80px;
+    margin-left: 100px;
   }
 }
 
 @media (max-width: 500px) {
   .homepage-container {
-    flex-direction: column; /* Stack sidebar and main content vertically */
+    flex-direction: column;
   }
 
   .sidebar-container {
     width: 100%;
+    height: auto;
     border-right: none;
-    border-bottom: 1px solid #e1e8ed; /* Separator line for mobile */
+    border-bottom: 1px solid #e1e8ed;
   }
 
   .main-content {

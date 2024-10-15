@@ -32,24 +32,27 @@ public class PostController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<PostDto> createPost(
             @RequestParam("content") String content,
-            @RequestParam(value = "media", required = false) MultipartFile mediaFile // Handling media
+            @RequestParam(value = "mediaFile", required = false) MultipartFile mediaFile // Ensure it expects 'mediaFile'
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser();
 
         String mediaUrl = null;
         if (mediaFile != null && !mediaFile.isEmpty()) {
-            mediaUrl = mediaService.upload(mediaFile); // Upload the media file and get the URL
+            mediaUrl = mediaService.upload(mediaFile);
         }
 
         Post post = Post.builder()
                 .content(content)
                 .user(authenticatedUser)
-                .mediaUrl(mediaUrl) // Save the media URL if present
+                .mediaUrl(mediaUrl)
                 .build();
 
         Post createdPost = postService.createPost(post);
         return new ResponseEntity<>(PostDto.from(createdPost), HttpStatus.CREATED);
     }
+
+
+
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<PostDto>> getPostsByUser(@PathVariable Long userId) {
@@ -67,7 +70,9 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<PostDto>> getAllPosts() {
-        List<Post> posts = postService.getAllPosts();
-        return new ResponseEntity<>(posts.stream().map(PostDto::from).collect(Collectors.toList()), HttpStatus.OK);
+        List<PostDto> posts = postService.getAllPosts();
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+
     }
+
 }

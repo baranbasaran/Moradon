@@ -11,8 +11,9 @@ import java.time.LocalDateTime;
 public class PostDto {
     private Long id;
     private String content;
-    private String username; // For displaying the username
+    private String username;
     private LocalDateTime createdAt;
+    private String mediaUrl;  // Include media URL in response
 
     public static PostDto from(Post post) {
         return PostDto.builder()
@@ -20,6 +21,7 @@ public class PostDto {
                 .content(post.getContent())
                 .username(post.getUser().getUsername())
                 .createdAt(post.getCreatedAt())
+                .mediaUrl(post.getMediaUrl())
                 .build();
     }
 }

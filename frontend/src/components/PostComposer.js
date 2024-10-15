@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import "../styles/PostComposer.css";
-import { addPost } from "../redux/postSlice"; // Import the action
+import { addPost } from "../redux/postSlice";
 
 const PostComposer = () => {
-  const [postContent, setPostContent] = useState("");
-  const [media, setMedia] = useState(null); // State to hold the media file
+  const [content, setContent] = useState("");
+  const [mediaFile, setMediaFile] = useState(null); // State to hold the media file
   const dispatch = useDispatch();
 
   const handlePost = () => {
-    if (postContent.trim()) {
+    if (content.trim()) {
       const formData = new FormData();
-      formData.append("content", postContent);
-      if (media) {
-        formData.append("media", media); // Attach media to the post
+      formData.append("content", content);
+      if (mediaFile) {
+        formData.append("mediaFile", mediaFile); // Update key to 'mediaFile'
       }
-      dispatch(addPost(formData)); // Send formData instead of a simple object
-      setPostContent("");
-      setMedia(null); // Reset media state
+      dispatch(addPost({ content, mediaFile }));
+      setContent("");
+      setMediaFile(null);
     }
   };
 
@@ -26,13 +26,13 @@ const PostComposer = () => {
       <textarea
         placeholder="What's happening?"
         rows="3"
-        value={postContent}
-        onChange={(e) => setPostContent(e.target.value)}
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
       />
       <input
         type="file"
         accept="image/*,video/*"
-        onChange={(e) => setMedia(e.target.files[0])} // Handle file input
+        onChange={(e) => setMediaFile(e.target.files[0])}
       />
       <div className="post-composer-actions">
         <div className="media-buttons">
@@ -42,7 +42,7 @@ const PostComposer = () => {
         </div>
         <button
           className="post-button"
-          disabled={!postContent.trim()}
+          disabled={!content.trim()}
           onClick={handlePost}
         >
           Post

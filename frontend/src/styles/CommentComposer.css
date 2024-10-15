@@ -1,0 +1,131 @@
+.comment-composer-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--secondary-bg-color);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  width: 500px;
+  max-width: 100%;
+}
+
+.comment-composer-header {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: var(--padding-small);
+}
+
+.comment-composer-avatar-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-composer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.comment-composer-details {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.comment-composer-name {
+  font-weight: bold;
+  font-size: var(--font-size-medium);
+}
+
+.comment-composer-username,
+.comment-composer-time {
+  color: var(--secondary-text-color);
+  font-size: var(--font-size-small);
+}
+
+.comment-composer-content-container {
+  display: flex;
+  align-items: center;
+  margin-top: var(--margin-small);
+}
+
+.comment-composer-separator {
+  border-left: 2px solid var(--secondary-text-color);
+  margin-right: var(--margin-medium);
+}
+
+.comment-composer-post {
+  flex-grow: 1;
+  padding-left: var(--margin-medium);
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.comment-composer-content {
+  color: var(--primary-text-color);
+  margin-left: var(--margin-medium);
+}
+
+.comment-composer-sender {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.comment-composer-input {
+  flex-grow: 1;
+  padding-left: var(--margin-medium);
+}
+
+.comment-composer-textarea {
+  width: 100%;
+  padding: var(--padding-small);
+  font-family: var(--font-family);
+  font-size: var(--font-size-large);
+  border: none;
+  resize: none;
+  background-color: var(--secondary-bg-color);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.comment-composer-textarea:focus {
+  outline: none;
+}
+
+.comment-composer-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--margin-small);
+}
+
+.comment-composer-buttons {
+  display: flex;
+  gap: var(--gap-medium);
+}
+
+.comment-composer-submit,
+.comment-composer-cancel {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: var(--padding-small);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.comment-composer-submit:hover,
+.comment-composer-cancel:hover {
+  background-color: var(--accent-hover-color);
+}
+
+@media (max-width: 768px) {
+  .comment-composer-modal {
+    width: 90%;
+    padding: var(--padding-small);
+  }
+}

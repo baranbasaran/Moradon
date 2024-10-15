@@ -9,6 +9,8 @@ Moradon is a social media platform designed specifically for book enthusiasts. I
 - **Friendship**: Users can add each other as friends. This allows them to see each other's posts and book listings, and to engage in book exchanges.
 
 - **Profile Picture**: Users can upload a profile picture to personalize their account.
+  
+- **Timeline**: Each user has a personal timeline where they can post pictures or text. This is a great place to share thoughts on recent reads, post pictures of book covers, or discuss literary topics.
 
 ## Future Plans
 
@@ -19,8 +21,8 @@ We are constantly working to improve and expand Moradon. Here are some of the fe
 - **Book Recommendations**: We plan to implement a feature that will recommend books to users based on their reading history and preferences.
 
 - **Reading Groups**: Users will be able to form and join reading groups, where they can schedule group readings and discuss books.
+  
 - **Messaging**: Users can send private messages to each other. This can be used to discuss book exchanges, or simply to chat about shared interests.
-- **Timeline**: Each user has a personal timeline where they can post pictures or text. This is a great place to share thoughts on recent reads, post pictures of book covers, or discuss literary topics.
 
 We hope you enjoy using Moradon and we look forward to seeing you on the platform!
 

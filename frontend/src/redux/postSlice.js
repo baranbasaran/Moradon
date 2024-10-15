@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import apiClient from "../api/axios"; // Your axios config
+import apiClient from "../api/axios";
 
 // Fetch posts
 export const fetchPosts = createAsyncThunk(
@@ -17,13 +17,11 @@ export const fetchPosts = createAsyncThunk(
 // Add post with media support
 export const addPost = createAsyncThunk(
   "posts/addPost",
-  async ({ content, media }, { rejectWithValue }) => {
+  async ({ content, mediaFile }, { rejectWithValue }) => {
     try {
       const formData = new FormData();
       formData.append("content", content);
-      if (media) {
-        formData.append("media", media); // Add media to the FormData
-      }
+      if (mediaFile) formData.append("media", mediaFile);
 
       const response = await apiClient.post("/posts", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -48,6 +46,34 @@ export const deletePost = createAsyncThunk(
   }
 );
 
+// Like a post
+export const likePost = createAsyncThunk(
+  "posts/likePost",
+  async (postId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(`/posts/${postId}/like`);
+      return { postId, likes: response.data.likes };
+    } catch (error) {
+      return rejectWithValue(error.response.data || "Error liking post");
+    }
+  }
+);
+
+// Add a comment to a post
+export const addComment = createAsyncThunk(
+  "posts/addComment",
+  async ({ postId, commentText }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(`/posts/${postId}/comment`, {
+        comment: commentText,
+      });
+      return { postId, comments: response.data.comments };
+    } catch (error) {
+      return rejectWithValue(error.response.data || "Error adding comment");
+    }
+  }
+);
+
 const initialState = {
   posts: [],
   status: "idle", // idle, loading, succeeded, failed
@@ -66,7 +92,11 @@ const postSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.posts = action.payload;
+        state.posts = action.payload.map((post) => ({
+          ...post,
+          likes: post.likes || 0,
+          comments: post.comments || [],
+        }));
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";
@@ -79,7 +109,7 @@ const postSlice = createSlice({
       })
       .addCase(addPost.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.posts.unshift(action.payload); // Add the new post to the front of the list
+        state.posts.unshift(action.payload); // Add new post at the top
       })
       .addCase(addPost.rejected, (state, action) => {
         state.status = "failed";
@@ -97,6 +127,20 @@ const postSlice = createSlice({
       .addCase(deletePost.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
+      })
+
+      // Like Post
+      .addCase(likePost.fulfilled, (state, action) => {
+        const { postId, likes } = action.payload;
+        const post = state.posts.find((post) => post.id === postId);
+        if (post) post.likes = likes;
+      })
+
+      // Add Comment
+      .addCase(addComment.fulfilled, (state, action) => {
+        const { postId, comments } = action.payload;
+        const post = state.posts.find((post) => post.id === postId);
+        if (post) post.comments = comments;
       });
   },
 });

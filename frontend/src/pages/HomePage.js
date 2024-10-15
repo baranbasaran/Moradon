@@ -27,6 +27,8 @@ const HomePage = () => {
         <PostComposer />
         <Posts posts={posts} />
       </div>
+      <div className="separator" />
+      <div className="right-section">xd</div>
     </div>
   );
 };
