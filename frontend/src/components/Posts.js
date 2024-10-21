@@ -27,13 +27,19 @@ const Posts = () => {
   };
 
   const handleComment = (post) => {
-    setSelectedPost(post);
+    setSelectedPost(post); // Set the selected post
     setCommentComposerOpen(true);
   };
 
   const submitComment = (commentText) => {
     if (selectedPost) {
-      dispatch(addComment({ postId: selectedPost.id, commentText }));
+      dispatch(
+        addComment({
+          postId: selectedPost.id,
+          commentText,
+          userId: selectedPost.userId,
+        })
+      ); // Send userId with the comment
       setCommentComposerOpen(false);
     }
   };
@@ -46,52 +52,58 @@ const Posts = () => {
     <div className="posts-container">
       {posts.map((post) => (
         <div className="post-item" key={post.id}>
-          <div className="post-avatar">
-            <img src={post.avatarUrl} alt="Avatar" className="avatar" />
-          </div>
           <div className="post-content-container">
-            <div className="post-header">
-              <div className="post-details">
-                <span className="post-name">Baran Basaran</span>
-                <span className="post-username">@{post.username}</span>
-              </div>
-              <span className="post-time">
-                {formatTimeDifference(post.createdAt)}
-              </span>
+            <div className="post-avatar">
+              <img src={post.avatarUrl} alt="Avatar" className="avatar" />
             </div>
-            <div className="post-content">{post.content}</div>
-            {post.mediaUrl && (
-              <div className="post-media">
-                {post.mediaUrl.endsWith(".mp4") ? (
-                  <video src={post.mediaUrl} controls className="media-video" />
-                ) : (
-                  <img
-                    src={post.mediaUrl}
-                    alt="Post media"
-                    className="media-img"
-                  />
-                )}
-              </div>
-            )}
-            <div className="post-actions">
-              <div
-                className="post-action-item"
-                onClick={() => handleComment(post)}
-              >
-                <FaComment className="post-icon" />
-                <span className="action-count">
-                  {post.comments ? post.comments.length : 0}
+            <div className="post-main-content">
+              <div className="post-header">
+                <div className="post-details">
+                  <span className="post-name">Baran Basaran</span>
+                  <span className="post-username">@{post.username}</span>
+                </div>
+                <span className="post-time">
+                  {formatTimeDifference(post.createdAt)}
                 </span>
               </div>
-              <div
-                className="post-action-item"
-                onClick={() => handleLike(post.id)}
-              >
-                <FaHeart className="post-icon" />
-                <span className="action-count">{post.likes || 0}</span>
-              </div>
-              <div className="post-action-item">
-                <FaShareAlt className="post-icon" />
+              <div className="post-content">{post.content}</div>
+              {post.mediaUrl && (
+                <div className="post-media">
+                  {post.mediaUrl.endsWith(".mp4") ? (
+                    <video
+                      src={post.mediaUrl}
+                      controls
+                      className="media-video"
+                    />
+                  ) : (
+                    <img
+                      src={post.mediaUrl}
+                      alt="Post media"
+                      className="media-img"
+                    />
+                  )}
+                </div>
+              )}
+              <div className="post-actions">
+                <div
+                  className="post-action-item"
+                  onClick={() => handleComment(post)} // Pass the entire post to the comment handler
+                >
+                  <FaComment className="post-icon" />
+                  <span className="action-count">
+                    {post.commentCount ? post.commentCount : 0}
+                  </span>
+                </div>
+                <div
+                  className="post-action-item"
+                  onClick={() => handleLike(post.id)}
+                >
+                  <FaHeart className="post-icon" />
+                  <span className="action-count">{post.likes || 0}</span>
+                </div>
+                <div className="post-action-item">
+                  <FaShareAlt className="post-icon" />
+                </div>
               </div>
             </div>
           </div>
@@ -100,7 +112,7 @@ const Posts = () => {
 
       {commentComposerOpen && selectedPost && (
         <CommentComposer
-          selectedPost={selectedPost}
+          selectedPost={selectedPost} // Pass the selected post including userId
           onSubmit={submitComment}
           onClose={() => setCommentComposerOpen(false)}
         />

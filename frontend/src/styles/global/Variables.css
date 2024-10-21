@@ -1,14 +1,16 @@
 :root {
   /* Color Palette */
-  --primary-bg-color: #f5f5f5; /* Light cream for background */
-  --secondary-bg-color: #e0dfd5; /* Slightly darker tan for secondary elements */
-  --primary-text-color: #333333; /* Dark charcoal for main text */
-  --secondary-text-color: #6d6a5e; /* Muted brown/gray for secondary text */
-  --accent-color: #ff6f3f; /* Deep orange for action buttons and links */
-  --accent-hover-color: #e65a2e; /* Darker orange for hover states */
-  --error-color: #e74c3c; /* Error red */
-  --success-color: #2ecc71; /* Success green */
-  --white-color: #ffffff; /* Pure white color */
+  --primary-bg-color: #f0f4f8; /* Soft, cool light blue for a clean and inviting background */
+  --secondary-bg-color: #d9e2ec; /* Slightly darker blue-gray for elements like posts or containers */
+  --primary-text-color: #2c3e50; /* Dark slate blue for strong readability and contrast */
+  --secondary-text-color: #718096; /* Muted gray-blue for secondary text, like usernames or timestamps */
+  --accent-color: #ff6b6b; /* Warm, friendly coral red for buttons, highlights, and links */
+  --accent-hover-color: #ff4757; /* Darker, energetic red for hover states */
+  --success-color: #2dce89; /* Bright green for positive actions or success messages */
+  --error-color: #e63946; /* Strong red for error messages or important alerts */
+  --white-color: #ffffff; /* Pure white for contrast and clean sections */
+  --highlight-bg-color: #fff4e6; /* Soft peach highlight for important sections or new content */
+  --link-color: #1d72b8; /* Bright blue for links and clickable elements */
 
   /* Spacing */
   --padding-small: 10px;
@@ -26,7 +28,7 @@
   --gap-large: 20px; /* Define gap value for flex/grid layouts */
 
   /* Font Family */
-  --font-family: "Roboto", sans-serif;
+  --font-family: "Roboto", sans-serif; /* Keep a modern sans-serif font */
 
   /* Font Sizes */
   --font-size-small: 12px;
@@ -34,5 +36,5 @@
   --font-size-large: 24px;
 
   /* Border Radius */
-  --border-radius: 5px;
+  --border-radius: 8px; /* Increased border radius for a softer, more modern look */
 }

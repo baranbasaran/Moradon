@@ -6,8 +6,18 @@ const CommentComposer = ({ selectedPost, onSubmit, onClose }) => {
   const contentRef = useRef(null);
   const separatorRef = useRef(null);
 
+  const formatTimeDifference = (createdAt) => {
+    const now = new Date();
+    const postDate = new Date(createdAt);
+    const diffInMinutes = Math.floor((now - postDate) / 60000);
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    return diffInHours < 24
+      ? `${diffInHours}h ago`
+      : `${Math.floor(diffInHours / 24)}d ago`;
+  };
+
   useEffect(() => {
-    // Adjust the separator height dynamically based on the content's height
     if (contentRef.current && separatorRef.current) {
       separatorRef.current.style.height = `${contentRef.current.offsetHeight}px`;
     }
@@ -31,8 +41,12 @@ const CommentComposer = ({ selectedPost, onSubmit, onClose }) => {
             <div className="comment-composer-username">
               @{selectedPost.username}
             </div>
+            <span className="post-time">
+              {formatTimeDifference(selectedPost.createdAt)}
+            </span>
           </div>
         </div>
+
         <div className="comment-composer-content-container">
           <div className="comment-composer-separator" ref={separatorRef}></div>
           <div className="comment-composer-post" ref={contentRef}>
@@ -61,7 +75,6 @@ const CommentComposer = ({ selectedPost, onSubmit, onClose }) => {
         </div>
       </div>
 
-      {/* Footer buttons */}
       <div className="comment-composer-footer">
         <div className="comment-composer-buttons">
           <button className="comment-composer-cancel" onClick={onClose}>

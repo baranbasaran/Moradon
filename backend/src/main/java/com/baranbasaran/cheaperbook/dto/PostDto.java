@@ -12,6 +12,8 @@ public class PostDto {
     private Long id;
     private String content;
     private String username;
+    private Long userId;  // Include userId field
+    private Integer commentCount;
     private LocalDateTime createdAt;
     private String mediaUrl;  // Include media URL in response
 
@@ -20,6 +22,8 @@ public class PostDto {
                 .id(post.getId())
                 .content(post.getContent())
                 .username(post.getUser().getUsername())
+                .commentCount(post.getComments().size())
+                .userId(post.getUser().getId())  // Set the userId from the Post entity
                 .createdAt(post.getCreatedAt())
                 .mediaUrl(post.getMediaUrl())
                 .build();

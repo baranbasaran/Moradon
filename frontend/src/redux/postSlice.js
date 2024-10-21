@@ -58,15 +58,20 @@ export const likePost = createAsyncThunk(
     }
   }
 );
-
-// Add a comment to a post
 export const addComment = createAsyncThunk(
   "posts/addComment",
-  async ({ postId, commentText }, { rejectWithValue }) => {
+  async ({ postId, commentText, userId }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`/posts/${postId}/comment`, {
-        comment: commentText,
+      if (!postId || !commentText || !userId) {
+        throw new Error("Post ID, comment text, and user ID are required");
+      }
+
+      const response = await apiClient.post(`/posts/${postId}/comments`, {
+        content: commentText,
+        userId: userId,
+        postId: postId,
       });
+
       return { postId, comments: response.data.comments };
     } catch (error) {
       return rejectWithValue(error.response.data || "Error adding comment");

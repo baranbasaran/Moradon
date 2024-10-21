@@ -14,25 +14,28 @@
 
 .comment-composer-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center; /* Aligns the avatar and details horizontally */
   margin-bottom: var(--padding-small);
 }
 
 .comment-composer-avatar-container {
   display: flex;
-  flex-direction: column;
+  align-items: center; /* Vertically centers the avatar with the details */
 }
 
 .comment-composer-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  margin-right: var(
+    --margin-small
+  ); /* Add some spacing between the avatar and details */
 }
 
 .comment-composer-details {
   display: flex;
-  align-items: center;
-  gap: 5px;
+  align-items: baseline; /* Aligns the name, username, and post-time in one row */
+  gap: 10px; /* Adds space between the items in the row */
 }
 
 .comment-composer-name {
@@ -48,13 +51,14 @@
 
 .comment-composer-content-container {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Align the separator and post at the same height */
   margin-top: var(--margin-small);
 }
 
 .comment-composer-separator {
   border-left: 2px solid var(--secondary-text-color);
   margin-right: var(--margin-medium);
+  height: 100%; /* Ensures the separator line spans the full height of the content */
 }
 
 .comment-composer-post {
@@ -67,13 +71,12 @@
 
 .comment-composer-content {
   color: var(--primary-text-color);
-  margin-left: var(--margin-medium);
 }
 
 .comment-composer-sender {
   display: flex;
   align-items: center;
-  width: 100%;
+  margin-top: var(--margin-medium);
 }
 
 .comment-composer-input {

@@ -10,7 +10,6 @@ import com.baranbasaran.cheaperbook.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,21 +26,24 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDto createComment(CommentDto commentDto) {
-        // Fetch the associated post and user
-        Post post = postRepository.findById(commentDto.getPostId())
+    public CommentDto createComment(Long postId, CommentDto commentDto) {
+        // Fetch the associated post using postId
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // Fetch the associated user from commentDto
         User user = userRepository.findById(commentDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Create a new Comment entity
         Comment comment = Comment.builder()
                 .content(commentDto.getContent())
                 .post(post)
                 .user(user)
                 .build();
 
+        // Save the comment and return the DTO
         Comment savedComment = commentRepository.save(comment);
-
         return new CommentDto(savedComment.getId(), savedComment.getContent(), savedComment.getPost().getId(), savedComment.getUser().getId());
     }
 
@@ -51,7 +53,6 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         comment.setContent(commentDto.getContent());
-
         Comment updatedComment = commentRepository.save(comment);
 
         return new CommentDto(updatedComment.getId(), updatedComment.getContent(), updatedComment.getPost().getId(), updatedComment.getUser().getId());
@@ -64,6 +65,7 @@ public class CommentServiceImpl implements CommentService {
                 .map(comment -> new CommentDto(comment.getId(), comment.getContent(), comment.getPost().getId(), comment.getUser().getId()))
                 .collect(Collectors.toList());
     }
+
     @Override
     public void deleteComment(Long id) {
         commentRepository.deleteById(id); // Implementing the delete logic
