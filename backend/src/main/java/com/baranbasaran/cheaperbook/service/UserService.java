@@ -37,7 +37,7 @@ public class UserService {
         }
 
         // Return JWT token after successful authentication
-        return jwtTokenUtil.generateToken(user.getEmail());
+        return jwtTokenUtil.generateTokenWithClaims(user);
     }
 
     public String signUp(CreateUserRequest request) {
@@ -58,7 +58,7 @@ public class UserService {
         userRepository.save(user);
 
         // Return JWT token after successful signup
-        return jwtTokenUtil.generateToken(user.getEmail());
+        return jwtTokenUtil.generateTokenWithClaims(user);
     }
     @CachePut(value = "users", key = "'user_' + #email")
     public UserDto findByEmail(String email) {

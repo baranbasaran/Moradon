@@ -3,7 +3,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiClient from "../api/axios"; // Your axios config
 import { jwtDecode } from "jwt-decode"; // Correct import
-import { removeToken, setToken, getToken } from "../api/utils/tokenUtils";
+import { setTokens, removeTokens, getToken, getRefreshToken } from "../api/utils/tokenUtils";
 
 // Token validation function
 const isTokenExpired = (token) => {
@@ -16,18 +16,23 @@ const isTokenExpired = (token) => {
   }
 };
 
+// Get initial tokens from localStorage
+const initialToken = getToken();
+const initialRefreshToken = getRefreshToken();
+
 // Initial state
 const initialState = {
   user: null,
-  token: getToken() || null,
-  isAuthenticated: !!getToken(),
+  token: initialToken, // Initialize from localStorage
+  refreshToken: initialRefreshToken, // Initialize from localStorage
+  isAuthenticated: !!initialToken, // Set authenticated if token exists
   status: "idle", // idle, loading, succeeded, failed
   error: null,
 };
 
 // Logout action
 export const logout = () => (dispatch) => {
-  removeToken();
+  removeTokens();
   dispatch(authSlice.actions.logout());
 };
 
@@ -47,10 +52,10 @@ export const signup = createAsyncThunk(
         birthDate,
       });
 
-      const { token, user } = response.data;
-      setToken(token); // Save token to storage
+      const { token, refreshToken, user } = response.data;
+      setTokens(token, refreshToken);
 
-      return { user, token };
+      return { user, token, refreshToken };
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "Signup failed";
@@ -66,13 +71,39 @@ export const login = createAsyncThunk(
     try {
       const response = await apiClient.post("/auth/login", credentials);
 
-      const { token, user } = response.data;
-      setToken(token); // Save token to storage
+      const { token, refreshToken, user } = response.data;
+      setTokens(token, refreshToken);
 
-      return { user, token };
+      return { user, token, refreshToken };
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "Login failed";
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+// Refresh token async action
+export const refreshToken = createAsyncThunk(
+  "auth/refreshToken",
+  async (_, { rejectWithValue }) => {
+    try {
+      const currentRefreshToken = getRefreshToken();
+      if (!currentRefreshToken) {
+        throw new Error("No refresh token available");
+      }
+
+      const response = await apiClient.post("/auth/refresh", {
+        refreshToken: currentRefreshToken,
+      });
+
+      const { token, refreshToken, user } = response.data;
+      setTokens(token, refreshToken);
+
+      return { user, token, refreshToken };
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || error.message || "Token refresh failed";
       return rejectWithValue(errorMessage);
     }
   }
@@ -86,9 +117,11 @@ const authSlice = createSlice({
     logout(state) {
       state.user = null;
       state.token = null;
+      state.refreshToken = null;
       state.isAuthenticated = false;
       state.status = "idle"; // Reset status on logout
       state.error = null; // Clear error on logout
+      removeTokens();
     },
   },
   extraReducers: (builder) => {
@@ -102,6 +135,7 @@ const authSlice = createSlice({
         state.status = "succeeded";
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = true;
       })
       .addCase(login.rejected, (state, action) => {
@@ -117,11 +151,28 @@ const authSlice = createSlice({
         state.status = "succeeded";
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = true;
       })
       .addCase(signup.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload; // Error message from rejectWithValue
+      })
+      // Refresh token cases
+      .addCase(refreshToken.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.refreshToken = action.payload.refreshToken;
+        state.isAuthenticated = true;
+      })
+      .addCase(refreshToken.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+        state.isAuthenticated = false;
       });
   },
 });

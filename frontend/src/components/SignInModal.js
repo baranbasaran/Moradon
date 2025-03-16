@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "../styles/SignInModal.css";
 import { login } from "../redux/authSlice";
@@ -7,6 +7,7 @@ import { login } from "../redux/authSlice";
 const SignInModal = ({ onClose }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { status, error, isAuthenticated } = useSelector((state) => state.auth);
 
   // Initialize formData with default values
   const [formData, setFormData] = useState({
@@ -16,7 +17,9 @@ const SignInModal = ({ onClose }) => {
 
   const handleClose = () => {
     onClose();
-    navigate("/"); // Redirect to the welcome page when closed
+    if (!isAuthenticated) {
+      navigate("/"); // Only redirect to welcome page if not authenticated
+    }
   };
 
   const handleChange = (e) => {
@@ -26,7 +29,7 @@ const SignInModal = ({ onClose }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Prepare credentials
@@ -35,7 +38,17 @@ const SignInModal = ({ onClose }) => {
       password: formData.password,
     };
 
-    dispatch(login(credentials));
+    try {
+      const resultAction = await dispatch(login(credentials));
+      if (login.fulfilled.match(resultAction)) {
+        // Login successful
+        onClose(); // Close the modal first
+        navigate("/", { replace: true }); // Navigate to home page and replace history
+      }
+    } catch (err) {
+      // Error handling is done in the reducer
+      console.error("Login failed:", err);
+    }
   };
 
   return (
@@ -75,9 +88,14 @@ const SignInModal = ({ onClose }) => {
                 Password
               </label>
             </div>
-            <button type="submit" className="button-primary">
-              Log in
+            <button 
+              type="submit" 
+              className="button-primary"
+              disabled={status === "loading"}
+            >
+              {status === "loading" ? "Signing in..." : "Log in"}
             </button>
+            {error && <p className="error-message">{error}</p>}
           </div>
         </form>
         <a href="#" className="forgot-password">

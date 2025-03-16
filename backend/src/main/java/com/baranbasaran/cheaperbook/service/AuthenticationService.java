@@ -4,6 +4,8 @@ import com.baranbasaran.cheaperbook.controller.request.User.AuthLoginRequest;
 import com.baranbasaran.cheaperbook.controller.request.User.CreateUserRequest;
 import com.baranbasaran.cheaperbook.dto.AuthResponse;
 import com.baranbasaran.cheaperbook.dto.UserDto;
+import com.baranbasaran.cheaperbook.exception.InvalidCredentialsException;
+import com.baranbasaran.cheaperbook.exception.InvalidTokenException;
 import com.baranbasaran.cheaperbook.exception.UserNotFoundException;
 import com.baranbasaran.cheaperbook.model.User;
 import com.baranbasaran.cheaperbook.repository.UserRepository;
@@ -38,23 +40,55 @@ public class AuthenticationService {
     }
 
     public AuthResponse login(AuthLoginRequest request) {
-        // Retrieve the user by email, username, or phone number
-        User user = userRepository.findByEmail(request.getIdentifier())
-                .orElseGet(() -> userRepository.findByUsername(request.getIdentifier())
-                        .orElseGet(() -> userRepository.findByPhoneNumber(request.getIdentifier())
-                                .orElseThrow(() -> new UserNotFoundException("User not found."))));
+        // Validate input
+        if (request.getIdentifier() == null || request.getIdentifier().trim().isEmpty()) {
+            throw new IllegalArgumentException("Login identifier cannot be empty");
+        }
+
+        // Try to find user with a single query
+        User user = userRepository.findByEmailOrUsernameOrPhoneNumber(
+                request.getIdentifier(),
+                request.getIdentifier(),
+                request.getIdentifier())
+                .orElseThrow(() -> new UserNotFoundException(
+                        String.format("No user found with email, username, or phone number: %s", 
+                        request.getIdentifier())));
 
         // Check if the password matches
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Invalid credentials.");
+            throw new InvalidCredentialsException("Invalid password");
         }
 
-        // Generate JWT token
-        String token = jwtTokenUtil.generateToken(user.getEmail());
+        // Generate JWT token with additional claims
+        String token = jwtTokenUtil.generateTokenWithClaims(user);
 
-        // Return the authentication response
-        return new AuthResponse(token, UserDto.from(user));
+        // Generate refresh token
+        String refreshToken = jwtTokenUtil.generateRefreshToken(user);
+
+        // Return the authentication response with both tokens
+        return new AuthResponse(token, refreshToken, UserDto.from(user));
     }
+
+    public AuthResponse refreshToken(String refreshToken) {
+        // Validate refresh token
+        if (!jwtTokenUtil.validateRefreshToken(refreshToken)) {
+            throw new InvalidTokenException("Invalid refresh token");
+        }
+
+        // Extract user email from refresh token
+        String email = jwtTokenUtil.extractUsername(refreshToken);
+        
+        // Find user
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found for refresh token"));
+
+        // Generate new access token
+        String newToken = jwtTokenUtil.generateTokenWithClaims(user);
+
+        // Return new tokens
+        return new AuthResponse(newToken, refreshToken, UserDto.from(user));
+    }
+
     public AuthResponse signUp(CreateUserRequest request) {
         // Check if user with email or username already exists
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -78,10 +112,11 @@ public class AuthenticationService {
         // Save the user to the database
         userRepository.save(user);
 
-        // Generate JWT token
-        String token = jwtTokenUtil.generateToken(user.getEmail());
+        // Generate tokens
+        String token = jwtTokenUtil.generateTokenWithClaims(user);
+        String refreshToken = jwtTokenUtil.generateRefreshToken(user);
 
         // Return the authentication response
-        return new AuthResponse(token, UserDto.from(user));
+        return new AuthResponse(token, refreshToken, UserDto.from(user));
     }
 }

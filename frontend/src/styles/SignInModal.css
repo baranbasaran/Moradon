@@ -45,10 +45,17 @@
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.button-primary:hover {
+.button-primary:hover:not(:disabled) {
   background-color: var(--accent-hover-color);
+}
+
+.button-primary:disabled {
+  background-color: var(--secondary-bg-color);
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .input-container {
@@ -88,6 +95,7 @@
   font-size: var(--font-size-small);
   text-align: right;
   margin-top: var(--margin-small);
+  text-decoration: none;
 }
 
 .forgot-password:hover {
@@ -112,4 +120,14 @@
 
 .button-secondary:hover {
   background-color: darken(var(--error-color), 10%);
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: var(--font-size-small);
+  text-align: center;
+  margin-top: var(--margin-small);
+  padding: var(--padding-small);
+  background-color: rgba(255, 0, 0, 0.1);
+  border-radius: var(--border-radius);
 }

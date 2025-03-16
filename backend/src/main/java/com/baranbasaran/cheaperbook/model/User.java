@@ -16,7 +16,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@Entity(name = "users")
+@Entity
 @Table(name = "users")
 @Where(clause = "deleted = false")
 public class User extends BaseEntity {
