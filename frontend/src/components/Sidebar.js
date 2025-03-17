@@ -1,29 +1,50 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../redux/authSlice";
 import "../styles/Sidebar.css"; // Sidebar styles
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  };
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <div className="sidebar">
       <h2>Moradon</h2>
       <nav>
         <ul>
           <li>
-            <a href="/profile">
+            <button onClick={() => handleNavigation("/profile")} className="nav-button">
               <i className="fas fa-user"></i>
               <span className="link-text">Profile</span>
-            </a>
+            </button>
           </li>
           <li>
-            <a href="/books">
+            <button onClick={() => handleNavigation("/books")} className="nav-button">
               <i className="fas fa-book"></i>
               <span className="link-text">Books</span>
-            </a>
+            </button>
           </li>
           <li>
-            <a href="/settings">
+            <button onClick={() => handleNavigation("/settings")} className="nav-button">
               <i className="fas fa-cog"></i>
               <span className="link-text">Settings</span>
-            </a>
+            </button>
+          </li>
+          <li>
+            <button onClick={handleLogout} className="nav-button">
+              <i className="fas fa-sign-out-alt"></i>
+              <span className="link-text">Logout</span>
+            </button>
           </li>
         </ul>
       </nav>

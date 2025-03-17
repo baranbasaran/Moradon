@@ -91,3 +91,7 @@ backend/src/main/resources/application-local.properties
 *.env
 .env.local
 .env.*
+
+# Environment variables
+backend/.env
+.env

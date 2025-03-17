@@ -1,4 +1,5 @@
 // src/App.js
+import React from 'react';
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import WelcomePage from "./pages/WelcomePage";
@@ -11,20 +12,20 @@ function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const navigate = useNavigate();
   const location = useLocation();
-  const background = location.state?.background; // Capture the background state
+  const background = location.state?.background;
 
-  // Check the modal's active state based on URL
   const isSignIn = location.pathname === "/auth/sign-in";
   const isSignUp = location.pathname === "/auth/sign-up";
 
-  // To close modals and revert URL, we handle clicks on the background
   const closeModal = () => {
-    navigate("/"); // Redirects to main page when modal is closed
+    navigate("/");
   };
 
   return (
     <div className="app-layout">
-      {isAuthenticated} {/* Sidebar visible only if logged in */}
+      {isAuthenticated && <div className="sidebar">
+        {/* Add your sidebar content here */}
+      </div>}
       <div className="content">
         <Routes location={background || location}>
           {!isAuthenticated ? (
@@ -48,7 +49,6 @@ function App() {
           )}
         </Routes>
       </div>
-      {/* Conditionally show modals without changing the background */}
       {isSignIn && <SignInModal onClose={closeModal} />}
       {isSignUp && <SignUpModal onClose={closeModal} />}
     </div>

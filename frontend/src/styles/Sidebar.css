@@ -1,62 +1,73 @@
 /* Sidebar.css */
 .sidebar {
-  position: fixed;
   width: 250px;
   height: 100vh;
-  background-color: var(--primary-bg-color);
-  padding-left: var(--padding-extra-large);
-  color: var(--primary-text-color);
-  z-index: 1000;
-  transition: width 0.3s ease;
+  background-color: var(--background-secondary);
+  padding: 20px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 1px solid var(--border-color);
 }
 
 .sidebar h2 {
-  text-align: center;
-  color: var(--primary-text-color);
+  color: var(--text-primary);
+  margin-bottom: 30px;
+  font-size: 24px;
 }
 
 .sidebar nav ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .sidebar nav ul li {
-  margin: var(--margin-small) 0;
+  margin-bottom: 10px;
 }
 
-.sidebar nav ul li a {
-  text-decoration: none;
-  color: var(--primary-text-color);
+.nav-button {
   display: flex;
   align-items: center;
-  padding: var(--padding-small);
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-large);
-  transition: background-color 0.3s ease;
+  padding: 12px 15px;
+  width: 100%;
+  border: none;
+  background: none;
+  color: var(--text-primary);
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 25px;
+  transition: background-color 0.2s ease;
+  text-align: left;
 }
 
-.sidebar nav ul li a i {
-  margin-right: var(--margin-medium);
-  font-size: var(--font-size-large);
+.nav-button:hover {
+  background-color: var(--hover-color);
 }
 
-.sidebar nav ul li a:hover {
-  background-color: var(--secondary-bg-color);
-  border-radius: 30px;
-}
-
-.sidebar .post-button {
-  background-color: var(--accent-color);
-  color: #ffffff;
-  padding: var(--padding-small) var(--padding-medium);
+.nav-button i {
+  margin-right: 15px;
+  font-size: 20px;
+  width: 24px;
   text-align: center;
-  border-radius: 30px;
-  margin-top: var(--padding-medium);
-  font-size: var(--font-size-large);
 }
 
-.sidebar .post-button:hover {
-  background-color: var(--accent-hover-color);
+.link-text {
+  font-weight: 500;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.link-button:hover {
+  color: var(--primary-color-dark);
 }
 
 /* Responsive styles */
@@ -69,11 +80,13 @@
     display: none; /* Hide sidebar title */
   }
 
-  .sidebar nav ul li a .link-text {
+  .sidebar nav ul li a .link-text,
+  .sidebar nav ul li .logout-button .link-text {
     display: none; /* Hide link text on smaller screens */
   }
 
-  .sidebar nav ul li a i {
+  .sidebar nav ul li a i,
+  .sidebar nav ul li .logout-button i {
     margin: 0 auto; /* Center icons */
     font-size: 1.5rem;
   }

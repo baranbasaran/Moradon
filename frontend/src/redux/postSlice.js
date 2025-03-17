@@ -58,9 +58,10 @@ export const likePost = createAsyncThunk(
     }
   }
 );
+
 export const addComment = createAsyncThunk(
   "posts/addComment",
-  async ({ postId, commentText, userId }, { rejectWithValue }) => {
+  async ({ postId, commentText, userId, parentCommentId = null }, { rejectWithValue }) => {
     try {
       if (!postId || !commentText || !userId) {
         throw new Error("Post ID, comment text, and user ID are required");
@@ -70,6 +71,7 @@ export const addComment = createAsyncThunk(
         content: commentText,
         userId: userId,
         postId: postId,
+        parentCommentId: parentCommentId,
       });
 
       return { postId, comments: response.data.comments };
@@ -79,10 +81,37 @@ export const addComment = createAsyncThunk(
   }
 );
 
+// Add new action for fetching comments
+export const fetchComments = createAsyncThunk(
+  "posts/fetchComments",
+  async (postId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`/posts/${postId}/comments`);
+      return { postId, comments: response.data };
+    } catch (error) {
+      return rejectWithValue(error.response.data || "Error fetching comments");
+    }
+  }
+);
+
+// Add repost action
+export const repostPost = createAsyncThunk(
+  "posts/repostPost",
+  async (postId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(`/posts/${postId}/repost`);
+      return { postId, reposts: response.data.reposts };
+    } catch (error) {
+      return rejectWithValue(error.response.data || "Error reposting");
+    }
+  }
+);
+
 const initialState = {
   posts: [],
   status: "idle", // idle, loading, succeeded, failed
   error: null,
+  comments: {}, // Add comments state to store comments by postId
 };
 
 const postSlice = createSlice({
@@ -145,7 +174,31 @@ const postSlice = createSlice({
       .addCase(addComment.fulfilled, (state, action) => {
         const { postId, comments } = action.payload;
         const post = state.posts.find((post) => post.id === postId);
-        if (post) post.comments = comments;
+        if (post) {
+          post.comments = comments;
+          post.commentCount = (post.commentCount || 0) + 1;
+        }
+        // Update comments in the dedicated comments state
+        state.comments[postId] = comments;
+      })
+      
+      // Fetch Comments
+      .addCase(fetchComments.fulfilled, (state, action) => {
+        const { postId, comments } = action.payload;
+        state.comments[postId] = comments;
+      })
+
+      // Repost Post
+      .addCase(repostPost.fulfilled, (state, action) => {
+        const { postId, reposts } = action.payload;
+        const post = state.posts.find((post) => post.id === postId);
+        if (post) {
+          post.reposts = reposts;
+          post.reposted = !post.reposted; // Toggle repost status
+        }
+      })
+      .addCase(repostPost.rejected, (state, action) => {
+        state.error = action.payload || action.error.message;
       });
   },
 });

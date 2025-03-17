@@ -1,3 +1,40 @@
+/* CSS Variables */
+:root {
+  /* Colors */
+  --primary-color: #1DA1F2;
+  --primary-color-dark: #0D8ECF;
+  --background-primary: #FFFFFF;
+  --background-secondary: #F7F9FA;
+  --text-primary: #14171A;
+  --text-secondary: #657786;
+  --border-color: #E1E8ED;
+  --hover-color: #E8F5FE;
+  --disabled-color: #AAB8C2;
+  --error-color: #E0245E;
+  
+  /* Spacing */
+  --padding-small: 8px;
+  --padding-medium: 16px;
+  --padding-large: 24px;
+  --margin-small: 8px;
+  --margin-medium: 16px;
+  --margin-large: 24px;
+  --gap-small: 8px;
+  --gap-medium: 16px;
+  --gap-large: 24px;
+  
+  /* Typography */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-size-small: 12px;
+  --font-size-medium: 14px;
+  --font-size-large: 16px;
+  --font-size-xlarge: 20px;
+  
+  /* Other */
+  --border-radius: 8px;
+  --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
 /* Global Styles */
 * {
   margin: 0;
@@ -7,19 +44,21 @@
 
 body {
   font-family: var(--font-family);
-  background-color: var(--primary-bg-color);
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  line-height: 1.5;
 }
 
 h1,
 h2,
 h3 {
-  color: var(--primary-text-color);
+  color: var(--text-primary);
   margin-bottom: var(--margin-small);
 }
 
 a {
   text-decoration: none;
-  color: inherit;
+  color: var(--primary-color);
 }
 
 ul {
@@ -31,6 +70,43 @@ ul {
   margin: 0 auto;
   padding: var(--padding-medium);
 }
+
 .content {
-  padding: 20px;
+  padding: var(--padding-medium);
+  background-color: var(--background-primary);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+/* Error and loading states */
+.error-message {
+  color: var(--error-color);
+  padding: var(--padding-medium);
+  margin: var(--margin-medium) 0;
+  background-color: rgba(224, 36, 94, 0.1);
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--error-color);
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-large);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(29, 161, 242, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

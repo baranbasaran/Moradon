@@ -89,163 +89,132 @@ const SignUpModal = ({ onClose }) => {
         <form onSubmit={handleSubmit} autoComplete="off">
           <div className="modal-header">Create your account</div>
           <div className="modal-content">
-            {step === 1 && (
+            {step === 1 ? (
               <>
                 <div className="input-container">
                   <input
-                    autoComplete="new-contact"
-                    type={useEmail ? "email" : "text"}
-                    id="signup-contact"
+                    type={useEmail ? "email" : "tel"}
                     name={useEmail ? "email" : "phone"}
                     placeholder=" "
                     value={useEmail ? formData.email : formData.phone}
                     onChange={handleChange}
                     required
                   />
-                  <label className="input-label" htmlFor="signup-contact">
+                  <label className="input-label">
                     {useEmail ? "Email" : "Phone"}
                   </label>
                 </div>
-
-                <div className="input-container">
-                  <input
-                    autoComplete="new-password"
-                    type="password"
-                    id="signup-password"
-                    name="password"
-                    placeholder=" "
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label className="input-label" htmlFor="signup-password">
-                    Password
-                  </label>
-                </div>
-                <p className="toggle-contact" onClick={toggleUseEmail}>
-                  {useEmail ? "Use phone instead" : "Use email instead"}
-                </p>
-
-                <div className="dob-section">
-                  <p className="dob-title">Date of birth</p>
-                  <p className="dob-description">
-                    This will not be shown publicly. Confirm your own age, even
-                    if this account is for a business, a pet, or something else.
-                  </p>
-                  <div className="dob-fields">
-                    <select
-                      name="birthMonth"
-                      value={formData.birthMonth}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="" disabled>
-                        Month
-                      </option>
-                      {months.map((month) => (
-                        <option key={month.value} value={month.value}>
-                          {month.label}
-                        </option>
-                      ))}
-                    </select>
-                    <select
-                      name="birthDay"
-                      value={formData.birthDay}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="" disabled>
-                        Day
-                      </option>
-                      {[...Array(31).keys()].map((d) => (
-                        <option key={d + 1} value={d + 1}>
-                          {d + 1}
-                        </option>
-                      ))}
-                    </select>
-                    <select
-                      name="birthYear"
-                      value={formData.birthYear}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="" disabled>
-                        Year
-                      </option>
-                      {Array.from({ length: 100 }, (_, i) => (
-                        <option key={i} value={2023 - i}>
-                          {2023 - i}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
                 <button
-                  className="button-primary"
                   type="button"
+                  className="toggle-input"
+                  onClick={toggleUseEmail}
+                >
+                  Use {useEmail ? "phone" : "email"} instead
+                </button>
+                <button
+                  type="button"
+                  className="button-primary"
                   onClick={handleNextStep}
                 >
                   Next
                 </button>
               </>
-            )}
-
-            {step === 2 && (
+            ) : (
               <>
                 <div className="input-container">
                   <input
                     type="text"
-                    id="signup-name"
                     name="name"
                     placeholder=" "
                     value={formData.name}
                     onChange={handleChange}
                     required
                   />
-                  <label className="input-label" htmlFor="signup-name">
-                    Name
-                  </label>
+                  <label className="input-label">Name</label>
                 </div>
-
                 <div className="input-container">
                   <input
                     type="text"
-                    id="signup-username"
                     name="username"
                     placeholder=" "
                     value={formData.username}
                     onChange={handleChange}
                     required
                   />
-                  <label className="input-label" htmlFor="signup-username">
-                    Username
-                  </label>
+                  <label className="input-label">Username</label>
                 </div>
-
-                <button
-                  className="button-primary"
-                  type="submit"
-                  disabled={loading}
-                >
-                  {loading ? "Loading..." : "Submit"}
+                <div className="input-container">
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder=" "
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label className="input-label">Password</label>
+                </div>
+                <div className="date-of-birth">
+                  <h4>Date of birth</h4>
+                  <p>
+                    This will not be shown publicly. Confirm your own age, even if
+                    this account is for a business, a pet, or something else.
+                  </p>
+                  <div className="date-inputs">
+                    <select
+                      name="birthMonth"
+                      value={formData.birthMonth}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Month</option>
+                      {months.map((month) => (
+                        <option key={month.value} value={month.value}>
+                          {month.label}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="number"
+                      name="birthDay"
+                      placeholder="Day"
+                      min="1"
+                      max="31"
+                      value={formData.birthDay}
+                      onChange={handleChange}
+                      required
+                    />
+                    <input
+                      type="number"
+                      name="birthYear"
+                      placeholder="Year"
+                      min="1900"
+                      max={new Date().getFullYear()}
+                      value={formData.birthYear}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+                <button type="submit" className="button-primary">
+                  {loading ? "Creating account..." : "Sign up"}
                 </button>
               </>
             )}
-
-            {error && <p className="error-text">{error}</p>}
-          </div>
-
-          <div className="modal-footer">
-            <button
-              className="button-secondary"
-              type="button"
-              onClick={handleClose}
-            >
-              Close
-            </button>
+            {error && <p className="error-message">{error}</p>}
           </div>
         </form>
+        <div className="modal-footer">
+          <span>
+            Already have an account?{" "}
+            <button onClick={() => navigate("/auth/sign-in")} className="link-button">
+              Sign in
+            </button>
+          </span>
+          <button className="button-secondary" onClick={handleClose}>
+            Close
+          </button>
+        </div>
       </div>
     </>
   );

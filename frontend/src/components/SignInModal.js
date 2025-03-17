@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../styles/SignInModal.css";
 import { login } from "../redux/authSlice";
 
@@ -98,12 +98,15 @@ const SignInModal = ({ onClose }) => {
             {error && <p className="error-message">{error}</p>}
           </div>
         </form>
-        <a href="#" className="forgot-password">
+        <button onClick={() => navigate("/auth/forgot-password")} className="forgot-password">
           Forgot password?
-        </a>
+        </button>
         <div className="modal-footer">
           <span>
-            Don't have an account? <a href="/auth/sign-up">Sign up</a>
+            Don't have an account?{" "}
+            <button onClick={() => navigate("/auth/sign-up")} className="link-button">
+              Sign up
+            </button>
           </span>
           <button className="button-secondary" onClick={handleClose}>
             Close
