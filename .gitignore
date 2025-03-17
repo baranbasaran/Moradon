@@ -81,3 +81,13 @@ build/
 .env.development.local
 .env.test.local
 .env.production.local
+
+### Application Specific ###
+backend/set-env.sh
+backend/src/main/resources/application-local.properties
+
+### Environment Variables ###
+.env
+*.env
+.env.local
+.env.*
