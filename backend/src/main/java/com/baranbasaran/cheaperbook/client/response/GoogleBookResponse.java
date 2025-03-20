@@ -1,6 +1,6 @@
 package com.baranbasaran.cheaperbook.client.response;
 
-import com.baranbasaran.cheaperbook.dto.BookDto;
+import com.baranbasaran.cheaperbook.dto.response.book.BookResponse;
 import com.baranbasaran.cheaperbook.model.Book;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,87 +28,112 @@ public class GoogleBookResponse {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class VolumeInfo {
-        private String title = "Title is not available";
-        private List<String> authors = List.of();
-        private String description = "Description is not available";
-        private List<String> categories = List.of();
+        @JsonProperty("title")
+        private String title;
+
+        @JsonProperty("authors")
+        private List<String> authors;
+
+        @JsonProperty("categories")
+        private List<String> categories;
+
+        @JsonProperty("description")
+        private String description;
+
+        @JsonProperty("industryIdentifiers")
+        private List<IndustryIdentifier> industryIdentifiers;
 
         @JsonProperty("imageLinks")
         private ImageLinks imageLinks;
 
+        @JsonProperty("publisher")
+        private String publisher;
+
         @JsonProperty("publishedDate")
-        private String publishedDate = "0000";
+        private String publishedDate;
 
-        private String publisher = "Publisher is not available";
+        @JsonProperty("language")
+        private String language;
 
-        @Data
-        @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class ImageLinks {
-            @JsonProperty("thumbnail")
-            private String thumbnail = "";
-        }
+        @JsonProperty("pageCount")
+        private Integer pageCount;
 
-        public static BookDto from(VolumeInfo volumeInfo) {
-            BookDto result = new BookDto();
-
-            if (StringUtils.hasText(volumeInfo.getTitle())) {
-                result.setTitle(volumeInfo.getTitle());
-            }
-            if (!volumeInfo.getAuthors().isEmpty()
-                    && volumeInfo.getAuthors().stream().anyMatch(StringUtils::hasText)) {
-                result.setAuthor(volumeInfo.getAuthors().get(0));
-            }
-            if (!volumeInfo.getCategories().isEmpty()){
-                result.setGenre(volumeInfo.getCategories());
-            }
-            if (StringUtils.hasText(volumeInfo.getDescription())) {
-                result.setDescription(volumeInfo.getDescription());
-            }
-            if (StringUtils.hasText(volumeInfo.getPublisher())) {
-                result.setPublisher(volumeInfo.getPublisher());
-            }
-            if (Objects.nonNull(volumeInfo.getPublishedDate())) {
-                result.setPublicationYear(Integer.parseInt(volumeInfo.getPublishedDate().substring(0, 4)));
-            }
-            if (Objects.nonNull(volumeInfo.getImageLinks()) && StringUtils.hasText(volumeInfo.getImageLinks().getThumbnail())) {
-                result.setCoverImage(volumeInfo.getImageLinks().getThumbnail());
-            }
-
+        public BookResponse toBookResponse() {
+            BookResponse result = new BookResponse();
+            result.setTitle(this.title);
+            result.setAuthor(this.authors != null && !this.authors.isEmpty() 
+                ? this.authors.get(0) 
+                : null);
+            result.setGenre(this.categories);
+            result.setDescription(this.description);
+            result.setIsbn(this.industryIdentifiers != null 
+                ? this.industryIdentifiers.stream()
+                    .filter(id -> "ISBN_13".equals(id.getType()) || "ISBN_10".equals(id.getType()))
+                    .map(IndustryIdentifier::getIdentifier)
+                    .findFirst()
+                    .orElse(null)
+                : null);
+            result.setCoverImageUrl(this.imageLinks != null 
+                ? this.imageLinks.getThumbnail() 
+                : null);
+            result.setPublisher(this.publisher);
+            result.setPublishYear(this.publishedDate != null 
+                ? Integer.parseInt(this.publishedDate.substring(0, 4)) 
+                : null);
+            result.setLanguage(this.language);
+            result.setPageCount(this.pageCount);
             return result;
         }
     }
 
-    public List<Book> getBooks() {
-        if (items.isEmpty()) {
-            return List.of();
-        }
-        return items.stream()
-                .map(Item::getVolumeInfo)
-                .map(VolumeInfo::from)
-            .map(bookDto -> {
-                Book book = new Book();
-                return book.mergeFromDto(bookDto);
-            })
-                .filter(Book::isValid)
-                .toList();
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class IndustryIdentifier {
+        @JsonProperty("type")
+        private String type;
+
+        @JsonProperty("identifier")
+        private String identifier;
+    }
+
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ImageLinks {
+        @JsonProperty("thumbnail")
+        private String thumbnail;
     }
 
     public Optional<Book> getBook() {
-        List<Book> books = getBooks();
-        if (books.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(books.get(0));
+        return items.stream()
+            .map(item -> item.getVolumeInfo())
+            .filter(Objects::nonNull)
+            .map(volumeInfo -> {
+                Book book = new Book();
+                book.setTitle(volumeInfo.getTitle());
+                book.setAuthor(volumeInfo.getAuthors() != null && !volumeInfo.getAuthors().isEmpty() 
+                    ? volumeInfo.getAuthors().get(0) 
+                    : null);
+                book.setGenre(volumeInfo.getCategories());
+                book.setDescription(volumeInfo.getDescription());
+                book.setIsbn(volumeInfo.getIndustryIdentifiers() != null 
+                    ? volumeInfo.getIndustryIdentifiers().stream()
+                        .filter(id -> "ISBN_13".equals(id.getType()) || "ISBN_10".equals(id.getType()))
+                        .map(IndustryIdentifier::getIdentifier)
+                        .findFirst()
+                        .orElse(null)
+                    : null);
+                book.setCoverImageUrl(volumeInfo.getImageLinks() != null 
+                    ? volumeInfo.getImageLinks().getThumbnail() 
+                    : null);
+                book.setPublisher(volumeInfo.getPublisher());
+                book.setPublishYear(volumeInfo.getPublishedDate() != null 
+                    ? Integer.parseInt(volumeInfo.getPublishedDate().substring(0, 4)) 
+                    : null);
+                book.setLanguage(volumeInfo.getLanguage());
+                book.setPageCount(volumeInfo.getPageCount());
+                return book;
+            })
+            .findFirst();
     }
-
-    public Optional<Book> findByIsbnAndTitle(String isbn, String title ) {
-         List<Book> books = getBooks();
-          if (books.isEmpty()) {
-                return Optional.empty();
-          }
-          return books.stream()
-                 .filter(book -> book.getIsbn().equals(isbn) && book.getTitle().equals(title))
-                 .findFirst();
-     }
 }
 

@@ -1,10 +1,11 @@
 package com.baranbasaran.cheaperbook.exception;
 
-import com.baranbasaran.cheaperbook.common.exceptionhandling.exception.ApiException;
-import org.springframework.http.HttpStatus;
-
-public class BookNotFoundException extends ApiException {
+public class BookNotFoundException extends RuntimeException {
     public BookNotFoundException(Long id) {
-        super("BOOK_NOT_FOUND", "Book with id %d not found.".formatted(id), HttpStatus.NOT_FOUND);
+        super("Book not found with ID: " + id);
+    }
+
+    public BookNotFoundException(String message) {
+        super(message);
     }
 }

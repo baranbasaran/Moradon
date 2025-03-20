@@ -1,43 +1,42 @@
 package com.baranbasaran.cheaperbook.controller;
 
-import com.baranbasaran.cheaperbook.dto.CommentDto;
+import com.baranbasaran.cheaperbook.dto.request.comment.CreateCommentRequest;
+import com.baranbasaran.cheaperbook.dto.response.comment.CommentResponse;
 import com.baranbasaran.cheaperbook.service.CommentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+
 @RestController
-@RequestMapping("/v1/posts/{postId}/comments")
+@RequestMapping("/v1/comments")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
 
-
     @PostMapping
-    public ResponseEntity<CommentDto> createComment(@PathVariable Long postId, @RequestBody CommentDto commentDto) {
-        // Set the postId in the CommentDto if it’s not already set
-        commentDto.setPostId(postId);
-
-        // Ensure userId is provided in commentDto
-        if (commentDto.getUserId() == null) {
-            throw new RuntimeException("User ID must be provided");
-        }
-
-        CommentDto createdComment = commentService.createComment(postId, commentDto);
-        return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
+    public ResponseEntity<CommentResponse> createComment(@Valid @RequestBody CreateCommentRequest request) {
+        CommentResponse createdComment = commentService.createComment(
+            request.getPostId(),
+            request.getContent(),
+            request.getParentCommentId()
+        );
+        return ResponseEntity.ok(createdComment);
     }
 
-    @GetMapping
-    public ResponseEntity<List<CommentDto>> getCommentsByPostId(@PathVariable Long postId) {
-        List<CommentDto> comments = commentService.getCommentsByPostId(postId);
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<List<CommentResponse>> getCommentsByPostId(@PathVariable Long postId) {
+        List<CommentResponse> comments = commentService.getCommentsByPostId(postId);
         return ResponseEntity.ok(comments);
     }
 
-    @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
-        commentService.deleteComment(commentId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
+        commentService.deleteComment(id);
         return ResponseEntity.noContent().build();
     }
 }

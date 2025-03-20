@@ -75,7 +75,12 @@ public class JwtTokenUtil {
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject, SECRET_KEY);
+        try {
+            return extractClaim(token, Claims::getSubject, SECRET_KEY);
+        } catch (JwtException e) {
+            // If failed with access token key, try refresh token key
+            return extractClaim(token, Claims::getSubject, REFRESH_SECRET_KEY);
+        }
     }
 
     public Long extractUserId(String token) {

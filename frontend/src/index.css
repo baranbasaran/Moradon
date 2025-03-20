@@ -1,38 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: #1d9bf0;
+    --primary-dark: #1a8cd8;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white;
+  }
+
+  * {
+    @apply m-0 p-0 box-border;
+  }
+
+  a {
+    @apply text-primary hover:text-primary-600 transition-colors duration-200;
+  }
+
+  ul {
+    @apply list-none;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-600 transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50;
+  }
+
+  .error-message {
+    @apply p-4 my-4 bg-red-50 dark:bg-red-900/20 rounded-md border-l-4 border-red-500 text-red-700 dark:text-red-300;
+  }
+
+  .loading-spinner {
+    @apply flex flex-col items-center justify-center p-12;
+  }
+
+  .spinner {
+    @apply w-10 h-10 border-4 border-gray-200 dark:border-gray-700 rounded-full border-t-primary animate-spin;
+  }
+}
+
 /* CSS Variables */
 :root {
-  /* Colors */
-  --primary-color: #1DA1F2;
-  --primary-color-dark: #0D8ECF;
-  --background-primary: #FFFFFF;
-  --background-secondary: #F7F9FA;
-  --text-primary: #14171A;
-  --text-secondary: #657786;
-  --border-color: #E1E8ED;
-  --hover-color: #E8F5FE;
-  --disabled-color: #AAB8C2;
-  --error-color: #E0245E;
-  
-  /* Spacing */
-  --padding-small: 8px;
-  --padding-medium: 16px;
-  --padding-large: 24px;
-  --margin-small: 8px;
-  --margin-medium: 16px;
-  --margin-large: 24px;
-  --gap-small: 8px;
-  --gap-medium: 16px;
-  --gap-large: 24px;
-  
+  /* Primary Colors */
+  --primary-900: #5d2e0c; /* Darkest - for emphasis */
+  --primary-800: #723a0f; /* Dark */
+  --primary-700: #8b4513; /* Base */
+  --primary-600: #a0522d; /* Light */
+  --primary-500: #b25d2d; /* Mid-tone */
+  --primary-400: #c67c3e; /* Lighter */
+  --primary-300: #d99b5f; /* Even lighter */
+  --primary-200: #e6be96; /* Very light */
+  --primary-100: #fff5e6; /* Lightest */
+
+  /* Accent Colors */
+  --accent-700: #b8860b; /* Dark */
+  --accent-600: #daa520; /* Base */
+  --accent-500: #e6b943; /* Mid-tone */
+  --accent-400: #f0cc6f; /* Light */
+  --accent-300: #f7de9e; /* Lighter */
+
+  /* Neutral Colors */
+  --neutral-900: #1a1614; /* Darkest */
+  --neutral-800: #2d2420;
+  --neutral-700: #453731;
+  --neutral-600: #5c4a42;
+  --neutral-500: #745e54;
+  --neutral-400: #8b7267;
+  --neutral-300: #a3877b;
+  --neutral-200: #bbac9f;
+  --neutral-100: #f5f0ed; /* Lightest */
+
+  /* Semantic Colors */
+  --success: #2d6a4f;
+  --error: #cf6679;
+  --warning: #cb8a14;
+  --info: #0288d1;
+
+  /* Text Colors */
+  --text-primary: var(--neutral-900);
+  --text-secondary: var(--neutral-700);
+  --text-tertiary: var(--neutral-500);
+  --text-on-primary: var(--neutral-100);
+  --text-on-accent: var(--neutral-900);
+
+  /* Background Colors */
+  --background-primary: var(--primary-100);
+  --background-secondary: var(--primary-200);
+  --background-tertiary: var(--primary-700);
+
+  /* Button Colors */
+  --button-primary: var(--primary-600);
+  --button-primary-hover: var(--primary-700);
+  --button-text: var(--text-on-primary);
+  --button-disabled: var(--primary-300);
+
+  /* Interactive States */
+  --hover-overlay: rgba(0, 0, 0, 0.04);
+  --active-overlay: rgba(0, 0, 0, 0.1);
+  --focus-ring: var(--accent-500);
+  --disabled-opacity: 0.38;
+
+  /* Border & Divider Colors */
+  --border-color: var(--accent-600);
+  --divider-color: var(--primary-200);
+
+  /* State Colors */
+  --hover-color: var(--hover-overlay);
+  --disabled-color: var(--primary-200);
+  --highlight-color: rgba(218, 165, 32, 0.15);
+
+  /* Link Colors */
+  --link-color: var(--primary-600);
+  --link-hover-color: var(--primary-700);
+
+  /* Spacing System */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem; /* 32px */
+  --space-12: 3rem; /* 48px */
+  --space-16: 4rem; /* 64px */
+
+  /* Legacy spacing variables mapped to new system */
+  --padding-small: var(--space-2); /* 8px */
+  --padding-medium: var(--space-4); /* 16px */
+  --padding-large: var(--space-6); /* 24px */
+  --margin-small: var(--space-2); /* 8px */
+  --margin-medium: var(--space-4); /* 16px */
+  --margin-large: var(--space-6); /* 24px */
+  --gap-small: var(--space-2); /* 8px */
+  --gap-medium: var(--space-4); /* 16px */
+  --gap-large: var(--space-6); /* 24px */
+
   /* Typography */
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   --font-size-small: 12px;
   --font-size-medium: 14px;
   --font-size-large: 16px;
   --font-size-xlarge: 20px;
-  
+
   /* Other */
   --border-radius: 8px;
-  --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --box-shadow: 0 2px 10px rgba(45, 59, 49, 0.1);
 }
 
 /* Global Styles */
@@ -44,7 +168,7 @@
 
 body {
   font-family: var(--font-family);
-  background-color: var(--background-secondary);
+  background-color: var(--background-primary);
   color: var(--text-primary);
   line-height: 1.5;
 }
@@ -58,7 +182,12 @@ h3 {
 
 a {
   text-decoration: none;
-  color: var(--primary-color);
+  color: var(--link-color);
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--link-hover-color);
 }
 
 ul {
@@ -73,19 +202,19 @@ ul {
 
 .content {
   padding: var(--padding-medium);
-  background-color: var(--background-primary);
+  background-color: var(--background-secondary);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
 }
 
 /* Error and loading states */
 .error-message {
-  color: var(--error-color);
+  color: var(--error);
   padding: var(--padding-medium);
   margin: var(--margin-medium) 0;
-  background-color: rgba(224, 36, 94, 0.1);
+  background-color: var(--hover-overlay);
   border-radius: var(--border-radius);
-  border-left: 4px solid var(--error-color);
+  border-left: 4px solid var(--error);
 }
 
 .loading-spinner {
@@ -99,9 +228,9 @@ ul {
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(29, 161, 242, 0.1);
+  border: 4px solid var(--hover-overlay);
   border-radius: 50%;
-  border-top-color: var(--primary-color);
+  border-top-color: var(--primary-600);
   animation: spin 1s ease-in-out infinite;
 }
 

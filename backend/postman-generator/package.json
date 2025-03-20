@@ -1,0 +1,13 @@
+{
+  "name": "cheaperbook-postman-generator",
+  "version": "1.0.0",
+  "description": "Postman collection generator for CheaperBook API",
+  "main": "generator.js",
+  "scripts": {
+    "generate": "node generator.js"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "path": "^0.12.7"
+  }
+} 

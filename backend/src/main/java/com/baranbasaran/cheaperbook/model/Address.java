@@ -1,30 +1,39 @@
 package com.baranbasaran.cheaperbook.model;
 
 import com.baranbasaran.cheaperbook.common.model.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
-
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-@Setter
 @Entity
 @Table(name = "addresses")
+@Where(clause = "deleted = false")
 public class Address extends BaseEntity {
 
-    @Column
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String street;
 
-    @Column
+    @Column(nullable = false)
     private String city;
 
-    @Column
+    @Column(nullable = false)
+    private String state;
+
+    @Column(nullable = false)
     private String country;
 
-    @Column
+    @Column(nullable = false)
     private String postalCode;
+
+    @Column
+    private String additionalInfo;
 }

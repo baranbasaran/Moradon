@@ -1,11 +1,11 @@
 package com.baranbasaran.cheaperbook.service;
-import com.baranbasaran.cheaperbook.dto.CommentDto;
+
+import com.baranbasaran.cheaperbook.dto.response.comment.CommentResponse;
 
 import java.util.List;
 
 public interface CommentService {
-    CommentDto createComment(Long postId, CommentDto commentDTO);  // Update to accept postId
-    CommentDto updateComment(Long id, CommentDto commentDTO);
+    CommentResponse createComment(Long postId, String content, Long parentCommentId);
+    List<CommentResponse> getCommentsByPostId(Long postId);
     void deleteComment(Long id);
-    List<CommentDto> getCommentsByPostId(Long postId);
 }
